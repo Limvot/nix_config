@@ -12,11 +12,6 @@
     outputs = { self, nixpkgs, home-manager }@attrs:
         let
           system = "x86_64-linux";
-          pkgs = import nixpkgs {
-            inherit system; 
-            config.allowUnfree = true;
-            overlays = [];
-          };
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
               home-manager.users.nathan = { config, pkgs, lib, ... }:{ 
@@ -135,6 +130,7 @@
               };
           };
           commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: {
+                  nixpkgs.config.allowUnfree = true;
                   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
                   time.timeZone = "America/New_York";
                   users.extraUsers.nathan = {
@@ -159,6 +155,10 @@
                     extraPortals = [pkgs.xdg-desktop-portal-gtk ];
                     gtkUsePortal = true;
                   };
+                  services.blueman.enable = true;
+
+                  services.printing.enable = true;
+                  services.printing.drivers = [ pkgs.brlaser ];
 
                   programs.sway = {
                     enable = true;
@@ -184,10 +184,9 @@
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop killall file unzip zip ripgrep imv killall gomuks htop
                     firefox-wayland chromium gnome.nautilus
-                    vlc calibre foliate transmission-gtk mupdf
-                    pywal
+                    vlc steam calibre foliate transmission-gtk mupdf
 
-                    foot
+                    foot pywal
                     sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
                     (pkgs.writeTextFile {
                       name = "dbus-sway-environment";
@@ -239,10 +238,61 @@
 
                   services.openssh.enable = true;
                   networking.firewall.enable = false;
-                  system.stateVersion = "22.11"; # Did you read the comment?
-
           });
         in {
+        nixosConfigurations.nixos4800H = nixpkgs.lib.nixosSystem {
+            inherit system; 
+            specialArgs = attrs;
+            modules = [
+                home-manager.nixosModules.home-manager
+                homeManagerSharedModule
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs) {
+                  # HARDWARE
+                  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+
+                  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_usb_sdmmc" ];
+                  boot.initrd.kernelModules = [ ];
+                  boot.kernelModules = [ "kvm-amd" ];
+                  boot.extraModulePackages = [ ];
+
+                  fileSystems."/" = { device = "/dev/disk/by-uuid/ae8e4a92-53dd-49b5-bf3a-aeb9a109c01e"; fsType = "ext4"; };
+                  fileSystems."/boot" = { device = "/dev/disk/by-uuid/28E9-0409"; fsType = "vfat"; };
+                  swapDevices = [ ];
+                  nix.maxJobs = lib.mkDefault 16;
+                  # END HARDWARE
+
+                  boot.loader.systemd-boot.enable = true;
+                  boot.loader.efi.canTouchEfiVariables = true;
+                  boot.kernelPackages = pkgs.linuxPackages_latest;
+                  networking.hostName = "nixos4800H"; # Define your hostname.
+
+                  # THIS SEEMS CONTRADICTORY
+                  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
+                  # Per-interface useDHCP will be mandatory in the future, so this generated config
+                  # replicates the default behaviour.
+                  networking.useDHCP = false;
+                  networking.interfaces.eno1.useDHCP = true;
+                  networking.interfaces.wlp1s0.useDHCP = true;
+                  networking.wireguard.interfaces = {
+                    wg0 = {
+                        ips = [ "10.100.0.7/24" ];
+                        privateKeyFile = "/home/nathan/wireguard-keys/private";
+                        peers = [
+                            {
+                                publicKey = "WXx7XXJzerPJBPMTvZ454iQhx5Q5bFvBgF6NsPPX9nk=";
+                                allowedIPs = [ "10.100.0.0/24" ];
+                                #allowedIPs = [ "0.0.0.0/0" ];
+                                ## Then sudo ip route add 104.238.179.164 via 10.0.0.1 dev enp30s0
+                                endpoint = "104.238.179.164:51820";
+                                persistentKeepalive = 25;
+                            }
+                        ];
+                    };
+                  };
+                  system.stateVersion = "20.03";
+                }))
+            ];
+        };
         nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
             inherit system; 
             specialArgs = attrs;
@@ -267,6 +317,7 @@
                   boot.loader.systemd-boot.enable = true;
                   boot.loader.efi.canTouchEfiVariables = true;
                   networking.hostName = "nixos-desktop"; # Define your hostname.
+                  system.stateVersion = "22.11";
                 }))
             ];
         };
