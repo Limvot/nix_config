@@ -2,8 +2,7 @@
     description = "System config";
 
     inputs = {
-        #nixpkgs.url = "nixpkgs/nixos-unstable";
-        nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+        nixpkgs.url = "nixpkgs/nixos-unstable";
         home-manager = {
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows =  "nixpkgs";
@@ -18,32 +17,126 @@
             config.allowUnfree = true;
             overlays = [];
           };
-        in {
-        nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
-            inherit system; 
-            specialArgs = attrs;
-            modules = [
-                ({ config, lib, pkgs, modulesPath, ... }: {
-                  # HARDWARE
-                  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
-                  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sr_mod" ];
-                  boot.initrd.kernelModules = [ ];
-                  boot.kernelModules = [ "kvm-amd" ];
-                  boot.extraModulePackages = [ ];
-                  fileSystems."/" = { device = "/dev/disk/by-uuid/163c1731-2f66-436b-a74f-20f84ec628dd"; fsType = "ext4"; };
-                  fileSystems."/boot" = { device = "/dev/disk/by-uuid/9C44-5411"; fsType = "vfat"; };
-                  swapDevices = [ ];
-                  networking.useDHCP = lib.mkDefault true;
-                  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-                  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-                  # END HARDWARE
-
-                  boot.loader.systemd-boot.enable = true;
-                  boot.loader.efi.canTouchEfiVariables = true;
-                  networking.hostName = "nixos-desktop"; # Define your hostname.
+          homeManagerSharedModule = {
+              home-manager.useGlobalPkgs = true;
+              home-manager.users.nathan = { config, pkgs, lib, ... }:{ 
+                  # This value determines the Home Manager release that your
+                  # configuration is compatible with. This helps avoid breakage
+                  # when a new Home Manager release introduces backwards
+                  # incompatible changes.
+                  #
+                  # You can update Home Manager without changing this value. See
+                  # the Home Manager release notes for a list of state version
+                  # changes in each release.
+                  home.stateVersion = "22.11";
+                  
+                  home.packages = with pkgs; [ ];
+                  programs.starship = {
+                    enable = true;
+                    enableBashIntegration = true;
+                    settings = {
+                      add_newline = false;
+                      format = lib.concatStrings [
+                        "$username"
+                        "$hostname"
+                        "$directory"
+                        "$jobs"
+                        "$cmd_duration"
+                        "$character"
+                      ];
+                      directory = {
+                        truncation_length = 10;
+                        truncate_to_repo = false;
+                      };
+                      scan_timeout = 10;
+                      character = {
+                        success_symbol = "➜";
+                        error_symbol = "➜";
+                      };
+                    };
+                  };
+                  programs.bash = {
+                    enable = true;
+                    sessionVariables = {
+                    };
+                    profileExtra = ''
+                      if [ -e /home/nathan/.nix-profile/etc/profile.d/nix.sh ]; then . /home/nathan/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+                    '';
+                  };
+                  programs.git = {
+                    enable = true;
+                    userName = "Nathan Braswell";
+                    userEmail = "nathan@braswell.email";
+                  };
+                  programs.vim = {
+                    enable = true;
+                    plugins = with pkgs.vimPlugins; [ nerdcommenter vim-polyglot ];
+                    settings = {
+                      # Is the need for these obliviated by vim-polyglot using sleuth?
+                      #expandtab = false;
+                      tabstop = 4;
+                      shiftwidth = 4;
+                    };
+                    extraConfig = ''
+                      set number
+                      set hlsearch
+                      nnoremap <leader>m :bn<CR>
+                      nnoremap <leader>t :tabnew<CR>
+                      nnoremap <leader>. :tabn<CR>
+                      nnoremap <leader>, :tabp<CR>
+                      nnoremap <leader>v :vsplit<CR>
+                      nnoremap <leader>h :split<CR>
+                      nnoremap <leader>q :q<CR>
+                      inoremap jk <Esc>
+                      inoremap kj <Esc>
+                    '';
+                  };
+                  programs.tmux = {
+                    enable = true;
+                    extraConfig = ''
+                      #$Id: vim-keys.conf,v 1.2 2010-09-18 09:36:15 nicm Exp $
+                      #
+                      # vim-keys.conf, v1.2 2010/09/12
+                      #
+                      # By Daniel Thau.  Public domain.
+                      #
+                      # This configuration file binds many vi- and vim-like bindings to the
+                      # appropriate tmux key bindings.  Note that for many key bindings there is no
+                      # tmux analogue.  This is intended for tmux 1.3, which handles pane selection
+                      # differently from the previous versions
+                  
+                      # split windows like vim
+                      # vim's definition of a horizontal/vertical split is reversed from tmux's
+                      bind s split-window -v
+                      bind v split-window -h
+                  
+                      # move around panes with hjkl, as one would in vim after pressing ctrl-w
+                      bind h select-pane -L
+                      bind j select-pane -D
+                      bind k select-pane -U
+                      bind l select-pane -R
+                  
+                      # resize panes like vim
+                      # feel free to change the "1" to however many lines you want to resize by, only
+                      # one at a time can be slow
+                      bind < resize-pane -L 1
+                      bind > resize-pane -R 1
+                      bind - resize-pane -D 1
+                      bind + resize-pane -U 1
+                  
+                      # bind : to command-prompt like vim
+                      # this is the default in tmux already
+                      bind : command-prompt
+                  
+                      # vi-style controls for copy mode
+                      setw -g mode-keys vi
+                    '';
+                  };
+              };
+          };
+          commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: {
                   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
                   time.timeZone = "America/New_York";
-
                   users.extraUsers.nathan = {
                       name = "nathan";
                       isNormalUser = true;
@@ -74,7 +167,7 @@
                       swaylock # lockscreen
                       swayidle
                       #xwayland # for legacy apps
-                      waybar # status bar
+                      #waybar # status bar
                       mako # notification daemon
                       kanshi # autorandr
                       bemenu # is this right?
@@ -147,7 +240,34 @@
                   services.openssh.enable = true;
                   networking.firewall.enable = false;
                   system.stateVersion = "22.11"; # Did you read the comment?
-                })
+
+          });
+        in {
+        nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
+            inherit system; 
+            specialArgs = attrs;
+            modules = [
+                home-manager.nixosModules.home-manager
+                homeManagerSharedModule
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs) {
+                  # HARDWARE
+                  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+                  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sr_mod" ];
+                  boot.initrd.kernelModules = [ ];
+                  boot.kernelModules = [ "kvm-amd" ];
+                  boot.extraModulePackages = [ ];
+                  fileSystems."/" = { device = "/dev/disk/by-uuid/163c1731-2f66-436b-a74f-20f84ec628dd"; fsType = "ext4"; };
+                  fileSystems."/boot" = { device = "/dev/disk/by-uuid/9C44-5411"; fsType = "vfat"; };
+                  swapDevices = [ ];
+                  networking.useDHCP = lib.mkDefault true;
+                  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+                  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+                  # END HARDWARE
+
+                  boot.loader.systemd-boot.enable = true;
+                  boot.loader.efi.canTouchEfiVariables = true;
+                  networking.hostName = "nixos-desktop"; # Define your hostname.
+                }))
             ];
         };
     };
