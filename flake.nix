@@ -184,7 +184,7 @@
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop killall file unzip zip ripgrep imv killall gomuks htop
                     firefox-wayland chromium gnome.nautilus
-                    calibre foliate transmission-gtk mupdf
+                    vlc calibre foliate transmission-gtk mupdf
                     pywal
 
                     foot
