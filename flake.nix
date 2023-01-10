@@ -166,7 +166,7 @@
                     extraPackages = with pkgs; [
                       swaylock # lockscreen
                       swayidle
-                      #xwayland # for legacy apps
+                      xwayland # for legacy apps
                       #waybar # status bar
                       mako # notification daemon
                       kanshi # autorandr
@@ -180,6 +180,9 @@
                       "sway/config".source = ./sway_config;
                     };
                   };
+                  # For steam
+                  hardware.opengl.driSupport = true;
+                  hardware.opengl.driSupport32Bit = true;
 
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop killall file unzip zip ripgrep imv killall gomuks htop
