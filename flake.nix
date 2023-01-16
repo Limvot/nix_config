@@ -131,6 +131,7 @@
           };
           commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: {
                   nixpkgs.config.allowUnfree = true;
+                  nix.settings.experimental-features = [ "nix-command" "flakes" ];
                   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
                   time.timeZone = "America/New_York";
                   users.extraUsers.nathan = {
@@ -180,16 +181,16 @@
                       "sway/config".source = ./sway_config;
                     };
                   };
-                  # For steam
+                  # For steam, and Vulkan in general
                   hardware.opengl.driSupport = true;
                   hardware.opengl.driSupport32Bit = true;
 
                   environment.systemPackages = with pkgs; [
-                    tmux vim wget curl git w3m iftop killall file unzip zip ripgrep imv killall gomuks htop
+                    tmux vim wget curl git w3m iftop iotop killall file unzip zip ripgrep imv killall gomuks htop
                     firefox-wayland chromium gnome.nautilus
                     vlc steam calibre foliate transmission-gtk mupdf
 
-                    foot pywal
+                    foot pavucontrol pywal
                     sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
                     (pkgs.writeTextFile {
                       name = "dbus-sway-environment";
@@ -309,8 +310,10 @@
                   boot.initrd.kernelModules = [ ];
                   boot.kernelModules = [ "kvm-amd" ];
                   boot.extraModulePackages = [ ];
+                  boot.supportedFilesystems = [ "ntfs" ];
                   fileSystems."/" = { device = "/dev/disk/by-uuid/163c1731-2f66-436b-a74f-20f84ec628dd"; fsType = "ext4"; };
                   fileSystems."/boot" = { device = "/dev/disk/by-uuid/9C44-5411"; fsType = "vfat"; };
+                  fileSystems."/big_disk" = { device = "/dev/sdb1"; fsType = "ntfs3"; options = ["rw" "uid=1000"]; };
                   swapDevices = [ ];
                   networking.useDHCP = lib.mkDefault true;
                   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
