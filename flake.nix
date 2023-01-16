@@ -129,7 +129,7 @@
                   };
               };
           };
-          commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: {
+          commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: (specificPkgs: {
                   nixpkgs.config.allowUnfree = true;
                   nix.settings.experimental-features = [ "nix-command" "flakes" ];
                   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
@@ -222,7 +222,7 @@
                           gsettings set $gnome_schema gtk-theme 'Dracula'
                           '';
                     })
-                  ];
+                  ] ++ specificPkgs;
                   programs.waybar.enable = true;
 
                   # kanshi systemd service
@@ -242,7 +242,7 @@
 
                   services.openssh.enable = true;
                   networking.firewall.enable = false;
-          });
+          }));
         in {
         nixosConfigurations.nixos4800H = nixpkgs.lib.nixosSystem {
             inherit system; 
@@ -250,7 +250,7 @@
             modules = [
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light ]) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
@@ -303,7 +303,7 @@
             modules = [
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs []) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
                   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sr_mod" ];
