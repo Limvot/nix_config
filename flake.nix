@@ -84,6 +84,26 @@
                       nnoremap <leader>q :q<CR>
                       inoremap jk <Esc>
                       inoremap kj <Esc>
+
+                      " Thanks to https://unix.stackexchange.com/questions/140898/vim-hide-status-line-in-the-bottom
+                      let s:hidden_all = 0
+                      function! ToggleHiddenAll()
+                          if s:hidden_all  == 0
+                              let s:hidden_all = 1
+                              set noshowmode
+                              set noruler
+                              set laststatus=0
+                              set noshowcmd
+                          else
+                              let s:hidden_all = 0
+                              set showmode
+                              set ruler
+                              set laststatus=2
+                              set showcmd
+                          endif
+                      endfunction
+
+                      nnoremap <S-h> :call ToggleHiddenAll()<CR>
                     '';
                   };
                   programs.tmux = {
@@ -129,7 +149,7 @@
                   };
               };
           };
-          commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: {
+          commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: (specificPkgs: {
                   nixpkgs.config.allowUnfree = true;
                   nix.settings.experimental-features = [ "nix-command" "flakes" ];
                   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
@@ -222,7 +242,7 @@
                           gsettings set $gnome_schema gtk-theme 'Dracula'
                           '';
                     })
-                  ];
+                  ] ++ specificPkgs;
                   programs.waybar.enable = true;
 
                   # kanshi systemd service
@@ -242,7 +262,7 @@
 
                   services.openssh.enable = true;
                   networking.firewall.enable = false;
-          });
+          }));
         in {
         nixosConfigurations.nixos4800H = nixpkgs.lib.nixosSystem {
             inherit system; 
@@ -250,7 +270,7 @@
             modules = [
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light ]) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
@@ -303,7 +323,7 @@
             modules = [
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs []) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
                   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sr_mod" ];
