@@ -313,7 +313,7 @@
                   boot.supportedFilesystems = [ "ntfs" ];
                   fileSystems."/" = { device = "/dev/disk/by-uuid/163c1731-2f66-436b-a74f-20f84ec628dd"; fsType = "ext4"; };
                   fileSystems."/boot" = { device = "/dev/disk/by-uuid/9C44-5411"; fsType = "vfat"; };
-                  fileSystems."/big_disk" = { device = "/dev/sdb1"; fsType = "ntfs3"; options = ["rw" "uid=1000"]; };
+                  #fileSystems."/big_disk" = { device = "/dev/disk/by-uuid/B610D69310D65A47"; fsType = "ntfs3"; options = ["rw" "uid=1000"]; };
                   swapDevices = [ ];
                   networking.useDHCP = lib.mkDefault true;
                   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
