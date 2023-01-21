@@ -147,6 +147,34 @@
                       setw -g mode-keys vi
                     '';
                   };
+                  programs.emacs = {
+                    enable = true;
+                    extraConfig = ''
+                      (menu-bar-mode   -1)
+                      (tool-bar-mode    -1)
+                      (scroll-bar-mode  -1)
+                      (setq evil-want-C-u-scroll t)
+                      (evil-mode 1)
+                      (setq key-chord-two-keys-delay 0.5)
+                      (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+                      (key-chord-mode 1)
+                      (custom-set-variables
+                      ;; custom-set-variables was added by Custom.
+                      ;; If you edit it by hand, you could mess it up, so be careful.
+                      ;; Your init file should contain only one such instance.
+                      ;; If there is more than one, they won't work right.
+                      '(custom-safe-themes
+                      '("3ff4a0ad1a2da59a72536e6030291cf663314c14c8a5a9eb475f3c28436d071d" default)))
+                      (custom-set-faces
+                      ;; custom-set-faces was added by Custom.
+                      ;; If you edit it by hand, you could mess it up, so be careful.
+                      ;; Your init file should contain only one such instance.
+                      ;; If there is more than one, they won't work right.
+                      )
+                      (load-theme 'dracula t)
+                    '';
+                    extraPackages = epkgs: with epkgs; [ evil key-chord proof-general dracula-theme ];
+                  };
               };
           };
           commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: (specificPkgs: {
@@ -209,7 +237,7 @@
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip ripgrep imv killall gomuks htop
                     firefox-wayland chromium gnome.nautilus
                     vlc steam calibre foliate transmission-gtk mupdf
-
+                    gimp
                     foot pavucontrol pywal
                     sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
                     (pkgs.writeTextFile {
