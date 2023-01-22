@@ -153,8 +153,17 @@
                       (menu-bar-mode   -1)
                       (tool-bar-mode    -1)
                       (scroll-bar-mode  -1)
+
+		      ;; Use spaces, not tabs, for indentation.
+		      (setq-default indent-tabs-mode nil)
+		      ;; Highlight matching pairs of parentheses.
+		      (setq show-paren-delay 0)
+		      (show-paren-mode)
+
+
                       (setq evil-want-C-u-scroll t)
                       (evil-mode 1)
+		      (evil-set-undo-system 'undo-redo)
                       (setq key-chord-two-keys-delay 0.5)
                       (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
                       (key-chord-mode 1)
@@ -173,7 +182,7 @@
                       )
                       (load-theme 'dracula t)
                     '';
-                    extraPackages = epkgs: with epkgs; [ evil key-chord proof-general dracula-theme ];
+                    extraPackages = epkgs: with epkgs; [ evil key-chord magit proof-general paredit rainbow-delimiters dracula-theme ];
                   };
               };
           };
