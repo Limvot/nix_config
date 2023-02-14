@@ -65,7 +65,9 @@
                   };
                   programs.vim = {
                     enable = true;
-                    plugins = with pkgs.vimPlugins; [ nerdcommenter vim-polyglot ];
+                    plugins = with pkgs.vimPlugins; [
+                      nerdcommenter vim-polyglot #parinfer-rust
+                    ];
                     settings = {
                       # Is the need for these obliviated by vim-polyglot using sleuth?
                       #expandtab = false;
@@ -154,16 +156,18 @@
                       (tool-bar-mode    -1)
                       (scroll-bar-mode  -1)
 
-		      ;; Use spaces, not tabs, for indentation.
-		      (setq-default indent-tabs-mode nil)
-		      ;; Highlight matching pairs of parentheses.
-		      (setq show-paren-delay 0)
-		      (show-paren-mode)
+                      ;; Use spaces, not tabs, for indentation.
+                      (setq-default indent-tabs-mode nil)
+                      ;; Highlight matching pairs of parentheses.
+                      (setq show-paren-delay 0)
+                      (show-paren-mode)
+
+                      ;(require 'smartparens-config)
 
 
                       (setq evil-want-C-u-scroll t)
                       (evil-mode 1)
-		      (evil-set-undo-system 'undo-redo)
+                      (evil-set-undo-system 'undo-redo)
                       (setq key-chord-two-keys-delay 0.5)
                       (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
                       (key-chord-mode 1)
@@ -182,7 +186,13 @@
                       )
                       (load-theme 'dracula t)
                     '';
-                    extraPackages = epkgs: with epkgs; [ evil key-chord magit proof-general paredit rainbow-delimiters dracula-theme ];
+                    extraPackages = epkgs: with epkgs; [
+                      evil key-chord magit proof-general
+                      #paredit
+                      #smartparens
+                      #parinfer-rust-mode
+                      rainbow-delimiters dracula-theme
+                    ];
                   };
               };
           };
@@ -201,6 +211,8 @@
                       shell = "/run/current-system/sw/bin/bash";
                   };
 
+                  # testing
+                  services.jellyfin.enable = false;
                   services.pipewire = {
                     enable = true;
                     alsa.enable = true;
