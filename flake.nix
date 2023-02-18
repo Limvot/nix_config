@@ -314,7 +314,7 @@
           }));
         in {
         nixosConfigurations.nixos4800H = nixpkgs.lib.nixosSystem {
-            inherit system; 
+            inherit system;
             specialArgs = attrs;
             modules = [
                 home-manager.nixosModules.home-manager
@@ -367,7 +367,7 @@
             ];
         };
         nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
-            inherit system; 
+            inherit system;
             specialArgs = attrs;
             modules = [
                 home-manager.nixosModules.home-manager
@@ -393,6 +393,33 @@
                   boot.loader.efi.canTouchEfiVariables = true;
                   networking.hostName = "nixos-desktop"; # Define your hostname.
                   system.stateVersion = "22.11";
+                }))
+            ];
+        };
+        nixosConfigurations.condoserver = nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = attrs;
+            modules = [
+                home-manager.nixosModules.home-manager
+                homeManagerSharedModule
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs []) {
+		  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+		  boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sr_mod" "sdhci_pci" ];
+		  boot.initrd.kernelModules = [ ];
+		  boot.kernelModules = [ "kvm-intel" ];
+		  boot.extraModulePackages = [ ];
+		  fileSystems."/" = { device = "/dev/disk/by-uuid/0ef06a3a-080d-4f15-b53e-54c91adb8ec9"; fsType = "ext4"; };
+		  fileSystems."/boot" = { device = "/dev/disk/by-uuid/86F4-9779"; fsType = "vfat"; };
+		  swapDevices = [ { device = "/dev/disk/by-uuid/20cc65f9-f35e-419a-b00f-252cd576b2ce"; } ];
+		  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+		  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+		  # high-resolution display
+		  hardware.video.hidpi.enable = lib.mkDefault true;
+
+		  boot.loader.systemd-boot.enable = true;
+		  boot.loader.efi.canTouchEfiVariables = true;
+
+		  system.stateVersion = "22.11"; # Did you read the comment?
                 }))
             ];
         };
