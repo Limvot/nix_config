@@ -311,6 +311,7 @@
                   };
 
                   services.openssh.enable = true;
+                  services.tailscale.enable = true;
                   networking.firewall.enable = false;
           }));
         in {
@@ -422,6 +423,7 @@
 
                   # don't suspend on lid close
                   services.logind.lidSwitch = "ignore";
+                  networking.hostName = "condoserver"; # Define your hostname.
 
                   system.stateVersion = "22.11"; # Did you read the comment?
                 }))
@@ -473,6 +475,7 @@
                     size = 4096;
                   }];
 
+                  networking.hostName = "vps"; # Define your hostname.
                   networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
                   # WireGuard
                   networking.nat.enable = true;
@@ -483,43 +486,43 @@
                       #allowedUDPPorts = [ 22 80 443 5349 5350 51820 ];
                       allowedTCPPorts = [ 22 80 443 ];
                       allowedUDPPorts = [ 22 80 443 51820 ];
-                      extraCommands = ''
-                          iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-                      '';
+                      #extraCommands = ''
+                      #    iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+                      #'';
                   };
-                  networking.wireguard.interfaces = {
-                      wg0 = {
-                        ips = [ "10.100.0.1/24" ];
-                        listenPort = 51820;
-                        privateKeyFile = "/home/nathan/wireguard-keys/private";
-                        peers = [
-                          {
-                            publicKey = "FqJShA/dz8Jj73tSyjzcsyASOEv6uAFs6e/vRol8ygc=";
-                            allowedIPs = [ "10.100.0.2/32" ];
-                          }
-                          {
-                            publicKey = "aAgay9pn/3Vj1nHC4GFY2vysW12n5VFyuUcB5+0pux8=";
-                            allowedIPs = [ "10.100.0.3/32" ];
-                          }
-                          {
-                            publicKey = "u55Jkd4dRdBqnhliIP9lwsxIYow2Tr8BhPPhKFtaVAc=";
-                            allowedIPs = [ "10.100.0.4/32" ];
-                          }
-                          {
-                            publicKey = "J/BWU33DYMkoWOKSZWrtAqWciep03YuicaDMD5MCqWg=";
-                            allowedIPs = [ "10.100.0.5/32" ];
-                          }
-                          {
-                            publicKey = "y2gAEhg1vwK1+nka2Knu7NyOk8HaaY4w18nD6EMyLSk=";
-                            allowedIPs = [ "10.100.0.6/32" ];
-                          }
-                          {
-                            publicKey = "SoaYh1mb6DYd6TuOEFl4lRCZUBTPQfOnWHIOmtkgxxM=";
-                            allowedIPs = [ "10.100.0.7/32" ];
-                          }
-                        ];
-                      };
-                  };
+                  #networking.wireguard.interfaces = {
+                  #    wg0 = {
+                  #      ips = [ "10.100.0.1/24" ];
+                  #      listenPort = 51820;
+                  #      privateKeyFile = "/home/nathan/wireguard-keys/private";
+                  #      peers = [
+                  #        {
+                  #          publicKey = "FqJShA/dz8Jj73tSyjzcsyASOEv6uAFs6e/vRol8ygc=";
+                  #          allowedIPs = [ "10.100.0.2/32" ];
+                  #        }
+                  #        {
+                  #          publicKey = "aAgay9pn/3Vj1nHC4GFY2vysW12n5VFyuUcB5+0pux8=";
+                  #          allowedIPs = [ "10.100.0.3/32" ];
+                  #        }
+                  #        {
+                  #          publicKey = "u55Jkd4dRdBqnhliIP9lwsxIYow2Tr8BhPPhKFtaVAc=";
+                  #          allowedIPs = [ "10.100.0.4/32" ];
+                  #        }
+                  #        {
+                  #          publicKey = "J/BWU33DYMkoWOKSZWrtAqWciep03YuicaDMD5MCqWg=";
+                  #          allowedIPs = [ "10.100.0.5/32" ];
+                  #        }
+                  #        {
+                  #          publicKey = "y2gAEhg1vwK1+nka2Knu7NyOk8HaaY4w18nD6EMyLSk=";
+                  #          allowedIPs = [ "10.100.0.6/32" ];
+                  #        }
+                  #        {
+                  #          publicKey = "SoaYh1mb6DYd6TuOEFl4lRCZUBTPQfOnWHIOmtkgxxM=";
+                  #          allowedIPs = [ "10.100.0.7/32" ];
+                  #        }
+                  #      ];
+                  #    };
+                  #};
 
                   services.openssh.enable = true;
                   services.openssh.passwordAuthentication = false;
@@ -611,6 +614,15 @@
                       '';
                   };
 
+                  services.headscale = {
+                    enable = true;
+                    address = "0.0.0.0";
+                    port = 8789;
+                    serverUrl = "https://headscale.room409.xyz";
+                    dns.baseDomain = "wg.test";
+                    settings.logtail.enabled = false;
+                  };
+
                   security.acme.email = "miloignis@gmail.com";
                   security.acme.acceptTerms = true;
                   services.nginx = {
@@ -619,6 +631,15 @@
                       recommendedOptimisation = true;
                       recommendedProxySettings = true;
                       recommendedTlsSettings = true;
+
+                      virtualHosts."headscale.room409.xyz" = {
+                          forceSSL = true;
+                          enableACME = true;
+                          locations."/" = {
+                            proxyPass = "http://localhost:8789";
+                            proxyWebsockets = true;
+                          };
+                      };
 
                       virtualHosts."forge.room409.xyz" = {
                           forceSSL = true;
@@ -788,9 +809,11 @@
 
                   services.journald.extraConfig = "SystemMaxUse=50M";
 
+                  services.tailscale.enable = true;
                   environment.systemPackages = with pkgs; [
                       htop tmux git vim wget unzip file
                       iftop ripgrep
+                      config.services.headscale.package
                       #wireguard
                   ];
                   users.extraUsers.nathan = {
