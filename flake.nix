@@ -3,14 +3,13 @@
 
     inputs = {
         nixpkgs.url = "nixpkgs/nixos-unstable";
-        vps_nixpkgs.url = "nixpkgs/master";
         home-manager = {
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows =  "nixpkgs";
         };
     };
 
-    outputs = { self, nixpkgs, vps_nixpkgs, home-manager }@attrs:
+    outputs = { self, nixpkgs, home-manager }@attrs:
         let
           system = "x86_64-linux";
           homeManagerSharedModule = {
@@ -429,7 +428,7 @@
                 }))
             ];
         };
-        nixosConfigurations.vps = vps_nixpkgs.lib.nixosSystem {
+        nixosConfigurations.vps = nixpkgs.lib.nixosSystem {
             inherit system;
             specialArgs = attrs;
             modules = [
