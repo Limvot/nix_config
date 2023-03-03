@@ -422,6 +422,7 @@
 
                   # don't suspend on lid close
                   services.logind.lidSwitch = "ignore";
+                  services.glusterfs.enable = true;
                   networking.hostName = "condoserver"; # Define your hostname.
 
                   system.stateVersion = "22.11"; # Did you read the comment?

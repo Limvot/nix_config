@@ -39,8 +39,7 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs",
-        "vps_nixpkgs": "vps_nixpkgs"
+        "nixpkgs": "nixpkgs"
       }
     },
     "utils": {
@@ -56,21 +55,6 @@
         "owner": "numtide",
         "repo": "flake-utils",
         "type": "github"
-      }
-    },
-    "vps_nixpkgs": {
-      "locked": {
-        "lastModified": 1677557473,
-        "narHash": "sha256-Zz69BtbX1XSVvB3qkoDaeBPpvJbr+ELIOpWDKyXX4TU=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "44ac1cbea8621d6e18a2b0cbfa3d773ba04f3268",
-        "type": "github"
-      },
-      "original": {
-        "id": "nixpkgs",
-        "ref": "master",
-        "type": "indirect"
       }
     }
   },
