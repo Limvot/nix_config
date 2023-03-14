@@ -255,7 +255,7 @@
                   hardware.opengl.driSupport32Bit = true;
 
                   environment.systemPackages = with pkgs; [
-                    tmux vim wget curl git w3m iftop iotop killall file unzip zip ripgrep imv killall gomuks htop
+                    tmux vim wget curl git w3m iftop iotop killall file unzip zip ripgrep imv killall gomuks htop python3
                     firefox-wayland chromium gnome.nautilus
                     vlc steam calibre foliate transmission-gtk mupdf
                     gimp
@@ -347,22 +347,6 @@
                   networking.useDHCP = false;
                   networking.interfaces.eno1.useDHCP = true;
                   networking.interfaces.wlp1s0.useDHCP = true;
-                  networking.wireguard.interfaces = {
-                    wg0 = {
-                        ips = [ "10.100.0.7/24" ];
-                        privateKeyFile = "/home/nathan/wireguard-keys/private";
-                        peers = [
-                            {
-                                publicKey = "WXx7XXJzerPJBPMTvZ454iQhx5Q5bFvBgF6NsPPX9nk=";
-                                allowedIPs = [ "10.100.0.0/24" ];
-                                #allowedIPs = [ "0.0.0.0/0" ];
-                                ## Then sudo ip route add 104.238.179.164 via 10.0.0.1 dev enp30s0
-                                endpoint = "104.238.179.164:51820";
-                                persistentKeepalive = 25;
-                            }
-                        ];
-                    };
-                  };
                   system.stateVersion = "20.03";
                 }))
             ];
@@ -568,6 +552,7 @@
                         public_baseurl = "https://synapse.room409.xyz/";
 
                         enable_registration = false;
+                        #enable_registration_without_verification = true;
                         #registration_shared_secret = null;
                         database.name = "psycopg2";
                         url_preview_enabled = true;
