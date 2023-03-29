@@ -25,7 +25,24 @@
                   # changes in each release.
                   home.stateVersion = "22.11";
                   
-                  home.packages = with pkgs; [ ];
+                  fonts.fontconfig.enable = true;
+                  home.packages = with pkgs; [ fira-code jetbrains-mono iosevka monoid recursive ];
+                  programs.foot = {
+                    enable = true;
+                    settings = {
+                      main = {
+                        #font = "Fira Code:size=8";
+                        #font = "JetBrainsMono:size=8";
+                        #font = "Iosevka:size=8";
+                        #font = "Monoid:size=6";
+                        font = "Recursive:size=8";
+                        #dpi-aware = "yes";
+                      };
+                      mouse = {
+                        hide-when-typing = "yes";
+                      };
+                    };
+                  };
                   programs.starship = {
                     enable = true;
                     enableBashIntegration = true;
@@ -211,6 +228,8 @@
                       shell = "/run/current-system/sw/bin/bash";
                   };
 
+                  #fonts.fonts = with pkgs; [ fira-code jetbrains-mono iosevka ];
+
                   # testing
                   services.jellyfin.enable = false;
                   services.pipewire = {
@@ -259,7 +278,7 @@
                     firefox-wayland chromium gnome.nautilus
                     vlc steam calibre foliate transmission-gtk mupdf
                     gimp
-                    foot pavucontrol pywal
+                    pavucontrol pywal
                     sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
                     (pkgs.writeTextFile {
                       name = "dbus-sway-environment";
