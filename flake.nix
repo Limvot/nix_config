@@ -627,6 +627,13 @@
                     settings.logtail.enabled = false;
                   };
 
+                  services.ttyd = {
+                    enable = true;
+                    port = 9134;
+                    username = "miloignis";
+                    passwordFile = /var/lib/ttyd/secrets;
+                  };
+
                   security.acme.email = "miloignis@gmail.com";
                   security.acme.acceptTerms = true;
                   services.nginx = {
@@ -693,6 +700,14 @@
                         forceSSL = true;
                         enableACME = true;
                         root = "/var/www/faint.room409.xyz";
+                      };
+                      virtualHosts."ttyd.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          proxyPass = "http://localhost:9134";
+                          proxyWebsockets = true;
+                        };
                       };
                       #virtualHosts."www.kraken-lang.org" = {
                       #  forceSSL = true;
