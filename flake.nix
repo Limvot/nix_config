@@ -27,6 +27,14 @@
                   
                   fonts.fontconfig.enable = true;
                   home.packages = with pkgs; [ fira-code jetbrains-mono iosevka monoid recursive ];
+
+                  systemd.user.services.mpris-proxy = {
+                    Unit.Description = "Mpris proxy";
+                    Unit.After = [ "network.target" "sound.target" ];
+                    Service.ExecStart = "${pkgs.bluez}/bin/mpris-proxy";
+                    Install.WantedBy = [ "default.target" ];
+                  };
+
                   programs.foot = {
                     enable = true;
                     settings = {
@@ -231,7 +239,7 @@
                   #fonts.fonts = with pkgs; [ fira-code jetbrains-mono iosevka ];
 
                   # testing
-                  services.jellyfin.enable = false;
+                  #services.jellyfin.enable = false;
                   services.pipewire = {
                     enable = true;
                     alsa.enable = true;
@@ -244,6 +252,8 @@
                     extraPortals = [pkgs.xdg-desktop-portal-gtk ];
                     gtkUsePortal = true;
                   };
+
+                  hardware.bluetooth.enable = true;
                   services.blueman.enable = true;
 
                   services.printing.enable = true;
@@ -339,7 +349,7 @@
             modules = [
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light ]) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder ]) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
@@ -466,6 +476,15 @@
                             python-olm pycryptodome unpaddedbase64
                           ]);
                       });
+
+                      #lemmy-server = super.lemmy-server.overrideAttrs (old: {
+                      #  patches = (old.patches or []) ++ [(super.fetchpatch {
+                      #    name = "fix-db-migrations.patch";
+                      #    url = "https://gist.githubusercontent.com/matejc/9be474fa581c1a29592877ede461f1f2/raw/83886917153fcba127b43d9a94a49b3d90e635b3/fix-db-migrations.patch";
+                      #    hash = "sha256-BvoA4K9v84n60lG96j1+91e8/ERn9WlVTGk4Z6Fj4iA=";
+                      #  })];
+                      #});
+
                   }) ];
 
                   # Use the GRUB 2 boot loader.
@@ -606,6 +625,17 @@
                       httpPort = 3001;
                   };
 
+                  #systemd.services.lemmy.environment.RUST_BACKTRACE = "full";
+                  #systemd.services.lemmy.environment.LEMMY_DATABASE_URL = pkgs.lib.mkForce "postgres:///lemmy?host=/run/postgresql&user=lemmy";
+                  #services.lemmy = {
+                  #    enable = true;
+                  #    database.createLocally = true;
+                  #    settings = {
+                  #        hostname = "lemmy.room409.xyz";
+                  #    };
+                  #    nginx.enable = true;
+                  #};
+
                   services.postgresql = {
                       enable = true;
                       # postgresql user and db name in the service.matrix-synapse.databse_args setting is default
@@ -632,6 +662,7 @@
                     port = 9134;
                     username = "miloignis";
                     passwordFile = /var/lib/ttyd/secrets;
+                    clientOptions.fontFamily="Recursive";
                   };
 
                   security.acme.email = "miloignis@gmail.com";
@@ -651,6 +682,12 @@
                             proxyWebsockets = true;
                           };
                       };
+
+                      ## the rest is defined by the lemmy service
+                      #virtualHosts."lemmy.room409.xyz" = {
+                      #    forceSSL = true;
+                      #    enableACME = true;
+                      #};
 
                       virtualHosts."forge.room409.xyz" = {
                           forceSSL = true;
@@ -701,12 +738,23 @@
                         enableACME = true;
                         root = "/var/www/faint.room409.xyz";
                       };
-                      virtualHosts."ttyd.room409.xyz" = {
+                      virtualHosts."shell.room409.xyz" = {
                         forceSSL = true;
                         enableACME = true;
                         locations."/" = {
                           proxyPass = "http://localhost:9134";
                           proxyWebsockets = true;
+                        };
+                      };
+                      virtualHosts."drop.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          proxyPass = "http://localhost:9009";
+                          proxyWebsockets = true;
+                          extraConfig = ''
+                              client_max_body_size 500M;
+                          '';
                         };
                       };
                       #virtualHosts."www.kraken-lang.org" = {
@@ -834,6 +882,7 @@
                       iftop ripgrep
                       config.services.headscale.package
                       #wireguard
+                      droopy
                   ];
                   users.extraUsers.nathan = {
                     name = "nathan";
