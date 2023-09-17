@@ -283,7 +283,7 @@
 
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip ripgrep imv killall gomuks htop python3
-                    firefox-wayland chromium gnome.nautilus
+                    waypipe firefox-wayland chromium gnome.nautilus
                     vlc steam libreoffice calibre foliate transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
@@ -428,8 +428,6 @@
                   swapDevices = [ { device = "/dev/disk/by-uuid/20cc65f9-f35e-419a-b00f-252cd576b2ce"; } ];
                   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
                   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-                  # high-resolution display
-                  hardware.video.hidpi.enable = lib.mkDefault true;
 
                   boot.loader.systemd-boot.enable = true;
                   boot.loader.efi.canTouchEfiVariables = true;
