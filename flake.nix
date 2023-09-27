@@ -359,7 +359,6 @@
                   fileSystems."/" = { device = "/dev/disk/by-uuid/ae8e4a92-53dd-49b5-bf3a-aeb9a109c01e"; fsType = "ext4"; };
                   fileSystems."/boot" = { device = "/dev/disk/by-uuid/28E9-0409"; fsType = "vfat"; };
                   swapDevices = [ ];
-                  nix.maxJobs = lib.mkDefault 16;
                   # END HARDWARE
 
                   boot.loader.systemd-boot.enable = true;
@@ -455,7 +454,6 @@
                     { device = "/dev/disk/by-uuid/b9470789-6d82-4ad4-9a4a-7e19b8fcc8dc";
                     fsType = "ext4";
                   };
-                  nix.maxJobs = lib.mkDefault 1;
                   # END HARDWARE
 
                   nix.gc.automatic = true;
@@ -489,7 +487,6 @@
 
                   # Use the GRUB 2 boot loader.
                   boot.loader.grub.enable = true;
-                  boot.loader.grub.version = 2;
                   boot.loader.grub.device = "/dev/vda"; # or "nodev" for efi only
 
                   swapDevices = [{
@@ -506,8 +503,8 @@
                   networking.firewall = {
                       #allowedTCPPorts = [ 22 80 443 3478 3479 ];
                       #allowedUDPPorts = [ 22 80 443 5349 5350 51820 ];
-                      allowedTCPPorts = [ 22 80 443 ];
-                      allowedUDPPorts = [ 22 80 443 51820 ];
+                      allowedTCPPorts = [ 22 80 443 30000 ]; #30000 is minetest
+                      allowedUDPPorts = [ 22 80 443 51820 30000 ];
                       #extraCommands = ''
                       #    iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
                       #'';
@@ -547,9 +544,11 @@
                   #};
 
                   services.openssh.enable = true;
-                  services.openssh.passwordAuthentication = false;
-                  services.openssh.kbdInteractiveAuthentication = false;
-                  services.openssh.permitRootLogin = "prohibit-password";
+                  services.openssh.settings = {
+                    PasswordAuthentication = false;
+                    KbdInteractiveAuthentication = false;
+                    PermitRootLogin = "prohibit-password";
+                  };
 
                   services.mastodon = {
                     enable = true;
@@ -618,11 +617,13 @@
 
                   services.gitea = {
                       enable = true;
-                      disableRegistration = true;
+                      settings.service.DISABLE_REGISTRATION = true;
                       appName = "Room409.xyz Forge";
-                      domain = "forge.room409.xyz";
-                      rootUrl = "https://forge.room409.xyz/";
-                      httpPort = 3001;
+                      settings.server = {
+                        DOMAIN = "forge.room409.xyz";
+                        ROOT_URL = "https://forge.room409.xyz/";
+                        HTTP_PORT = 3001;
+                      };
                   };
 
                   #systemd.services.lemmy.environment.RUST_BACKTRACE = "full";
@@ -652,8 +653,8 @@
                     enable = true;
                     address = "0.0.0.0";
                     port = 8789;
-                    serverUrl = "https://headscale.room409.xyz";
-                    dns.baseDomain = "wg.test";
+                    settings.serverUrl = "https://headscale.room409.xyz";
+                    settings.dns_config.baseDomain = "wg.test";
                     settings.logtail.enabled = false;
                   };
 
@@ -665,8 +666,10 @@
                     clientOptions.fontFamily="Recursive";
                   };
 
-                  security.acme.email = "miloignis@gmail.com";
-                  security.acme.acceptTerms = true;
+                  security.acme = {
+                    acceptTerms = true;
+                    defaults.email = "miloignis@gmail.com";
+                  };
                   services.nginx = {
                       enable = true;
                       recommendedGzipSettings = true;
