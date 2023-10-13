@@ -581,6 +581,15 @@
                   #  port = 8888;
                   #};
 
+                  services.matrix-synapse.sliding-sync = {
+                    enable = true;
+                    createDatabase = true;
+                    environmentFile = "/var/lib/private/matrix-sliding-sync/secrets";
+                    settings = {
+                      SYNCV3_SERVER="https://synapse.room409.xyz";
+                    };
+                  };
+
                   services.matrix-synapse = {
                       enable = true;
 
@@ -708,13 +717,18 @@
                           locations."/.well-known/matrix/client".extraConfig = ''
                               add_header Content-Type application/json;
                               add_header Access-Control-Allow-Origin *;
-                              return 200 '{ "m.homeserver": {"base_url": "https://synapse.room409.xyz"}, "m.identity_server":  { "base_url": "https://vector.im"} }';
+                              return 200 '{ "m.homeserver": {"base_url": "https://synapse.room409.xyz"}, "org.matrix.msc3575.proxy": { "url": "https://syncv3.room409.xyz" }, "m.identity_server":  { "base_url": "https://vector.im"} }';
                           '';
                           locations."/".proxyPass = "http://localhost:8008";
                           locations."/".extraConfig = ''
                               client_max_body_size 100M;
                               proxy_set_header X-Forwarded-For $remote_addr;
                           '';
+                      };
+                      virtualHosts."syncv3.room409.xyz" = {
+                          forceSSL = true;
+                          enableACME = true;
+                          locations."/".proxyPass = "http://localhost:8009";
                       };
 
                       virtualHosts."element-synapse.room409.xyz" = {
