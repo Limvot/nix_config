@@ -82,6 +82,12 @@
                     profileExtra = ''
                       if [ -e /home/nathan/.nix-profile/etc/profile.d/nix.sh ]; then . /home/nathan/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
                     '';
+                    shellAliases = {
+                      ng  ="nmcli c up NETGEAR97";
+                      ng24="nmcli c up NETGEAR97_24_2Ghz";
+                      ng58="nmcli c up NETGEAR97_28_5Ghz";
+                      ng5c="nmcli c up NETGEAR97_2C_5Ghz";
+                    };
                   };
                   programs.git = {
                     enable = true;
@@ -347,12 +353,13 @@
             modules = [
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince ]) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.gnome.gnome-tweaks pkgs.vulkan-tools ]) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
                   
                   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usb_storage" "sd_mod" ];
-                  boot.initrd.kernelModules = [ ];
+                  boot.initrd.kernelModules = [ "amdgpu" ];
+                  hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
                   boot.kernelModules = [ "kvm-amd" ];
                   boot.extraModulePackages = [ ];
                   
@@ -383,8 +390,16 @@
                   boot.loader.systemd-boot.enable = true;
                   boot.loader.efi.canTouchEfiVariables = true;
                   boot.kernelPackages = pkgs.linuxPackages_latest;
+                  #boot.kernelPackages = pkgs.linuxPackages_testing;
+                  #boot.kernelParams = [ "amdgpu.sg_display=0" ];
                   networking.hostName = "nixos-framework"; # Define your hostname.
                   system.stateVersion = "22.11"; # Did you read the comment?
+                  services.fwupd.enable = true;
+                  #services.xserver = {
+                  #  enable = true;
+                  #  displayManager.gdm.enable = true;
+                  #  desktopManager.gnome.enable = true;
+                  #};
                 }))
             ];
         };
@@ -399,7 +414,8 @@
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
                   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_usb_sdmmc" ];
-                  boot.initrd.kernelModules = [ ];
+                  boot.initrd.kernelModules = [ "amdgpu" ];
+                  hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
                   boot.kernelModules = [ "kvm-amd" ];
                   boot.extraModulePackages = [ ];
 
@@ -597,12 +613,12 @@
                     PermitRootLogin = "prohibit-password";
                   };
 
-                  services.mastodon = {
-                    enable = true;
-                    localDomain = "mastodon.room409.xyz";
-                    configureNginx = true;
-                    smtp.fromAddress = "notifications@mastodon.room409.xyz";
-                  };
+                  #services.mastodon = {
+                  #  enable = true;
+                  #  localDomain = "mastodon.room409.xyz";
+                  #  configureNginx = true;
+                  #  smtp.fromAddress = "notifications@mastodon.room409.xyz";
+                  #};
 
                   services.mautrix-telegram = {
                       enable = true;

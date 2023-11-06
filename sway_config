@@ -17,7 +17,7 @@ exec configure-gtk
 exec sleep 5; systemctl --user start kanshi.service
 
 #When everything's wayland, maybe
-#output eDP-1 scale 2
+output eDP-1 scale 1
 
 #Output HDMI-A-1 'Goldstar Company Ltd LG TV SSCR2 0x00000101'
 output HDMI-A-1 mode 1920x1080@60Hz
