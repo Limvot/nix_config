@@ -878,6 +878,150 @@
                         #locations."/bookclub/".proxyPass = "http://localhost:8888/room/!xSMgeFJYbuYTOGAGga:synapse.room409.xyz/";
                       };
 
+                      virtualHosts."lotusronin.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          root = pkgs.writeTextDir "index.html" ''<!DOCTYPE html>
+                          <html lang="en">
+                              <head>
+                                  <meta charset="utf-8">
+                                  <title>LotusRonin's Website</title>
+                                  <style>
+                                      h1, h2 ,h3 { line-height:1.2; }
+                                      .bodyStuff {
+                                          max-width: 45em;
+                                          margin: 1em auto;
+                                          padding: 0 .62em;
+                                          font: 1.2em/1.62 sans-serif;
+                                      }
+                                      .floatLeft {
+                                        float: left;
+                                          max-width: 55em;
+                                          margin: 1em auto;
+                                          padding: 0 .62em;
+                                          font: 1.2em/1.62 sans-serif;
+                                      }
+                                  </style>
+                              </head>
+                              <body>
+                                  <div class="bodyStuff">
+                                  <header><h1>Main Page</h1></header>
+                                  <br> <br>
+                                  Take control of your tools, break from the system. Less is more.
+                                  </div>
+                                  <div class="floatLeft">
+                                    <ol>
+                                       <li><a href="">📜 Blog</a></li>
+                                       <li><a href="">👨‍💻 Code</a></li>
+                                       <li><a href="">🕹️ Games</a></li>
+                                       <li><a href="">(.)(.) MLKRs.shop signup</a></li>
+                                       <li><a href="">📄 Resume/About Me</a></li>
+                                    </ol>
+                                  </div>
+                                  <br> <br>
+                                  <div class="bodyStuff">
+                                  <img src="http://9front.org/img/9frontfell01.png">
+                                  <img src="http://9front.org/img/9frontfell02.png">
+                                  <img src="http://9front.org/img/9germanengineering01.png">
+                                  <img src="http://9front.org/img/9realemu01.png">
+                                  <img src="http://9front.org/img/9hold01.png">
+                                  <img src="http://9front.org/img/9frontfell03.png">
+                                  <img src="http://9front.org/img/9germanengineering02.png">
+                                  <img src="http://9front.org/img/9frontsystem02.png">
+                                  <img src="http://9front.org/img/9frontsystem03.png">
+                                  <img src="http://9front.org/img/9frontsystem04.png">
+                                  <img src="http://9front.org/img/9frontfell04.png">
+                                  <img src="http://9front.org/img/9cwfs01.png">
+                                  <img src="http://9front.org/img/9boot01.png">
+                                  <img src="http://9front.org/img/9kbdfs01.png">
+                                  <img src="http://9front.org/img/9frontsystem06.png">
+                                  <img src="http://9front.org/img/9frontsystem07.png">
+                                  <img src="http://9front.org/img/9couldfork01.png">
+                                  <img src="http://9front.org/img/9whatdidtheydo01.png">
+                                  <img src="http://9front.org/img/9fossil01.png">
+                                  <img src="http://9front.org/img/9pkg01.png">
+                                  <img src="http://9front.org/img/9boot02.png">
+                                  <img src="http://9front.org/img/9inferno01.png">
+                                  <img src="http://9front.org/img/9community01.png">
+                                  <img src="http://9front.org/img/9timesync01.png">
+                                  <img src="http://9front.org/img/9inferno02.png">
+                                  <img src="http://9front.org/img/9inferno01.png">
+                                  <img src="http://9front.org/img/9inferno01.png">
+                                  <img src="http://9front.org/img/9troll01.png">
+                                  <img src="http://9front.org/img/9pkg02.png">
+                                  <img src="http://9front.org/img/9direction02.png">
+                                  <img src="http://9front.org/img/9community03.png">
+                                  <img src="http://9front.org/img/9inferno01.png">
+                                  <img src="http://9front.org/img/9frontsystem09.png">
+                                  <img src="http://9front.org/img/9mothra01.png">
+                                  <img src="http://9front.org/img/9mothra02.png">
+                                  <img src="http://9front.org/img/9mothra03.png">
+                                  <img src="http://9front.org/img/9mothra04.png">
+                                  <img src="http://9front.org/img/9scram01.png">
+                                  <img src="http://9front.org/img/9frontsystem10.png">
+                                  <img src="http://9front.org/img/9man01.png">
+                                  <img src="http://9front.org/img/9community05.png">
+                                  <img src="http://9front.org/img/9chording01.png">
+                                  <img src="http://9front.org/img/9community06.png">
+                                  <img src="http://9front.org/img/9direction05.png">
+                                  <img src="http://9front.org/img/9paint01.png">
+                                  <img src="http://9front.org/img/9direction07.png">
+                                  <img src="http://9front.org/img/9ken01.png">
+                                  <img src="http://9front.org/img/9catv01.png">
+                                  <img src="http://9front.org/img/901.png">
+                                  <img src="http://9front.org/img/9frontsystem11.png">
+                                  <img src="http://9front.org/img/9troll03.png">
+                                  <img src="http://9front.org/img/9frontfell20.png">
+                                  <img src="http://9front.org/img/9tmove01.png">
+                                  <img src="http://9front.org/img/9codereview01.png">
+                                  <img src="http://9front.org/img/9inferno01.png">
+                                  <img src="http://9front.org/img/9nofork01.png">
+                                  <img src="http://9front.org/img/9iknowthis01.png">
+                                  <img src="http://9front.org/img/9mothra10.png">
+                                  <img src="http://9front.org/img/nixamerica.png">
+                                  <img src="http://9front.org/img/cmonks.png">
+                                  <img src="http://9front.org/img/9sysupdate01.png">
+                                  <img src="http://9front.org/img/9point01.png">
+                                  <img src="http://9front.org/img/drclenrek.png">
+                                  <img src="http://9front.org/img/9times.png">
+                                  <img src="http://9front.org/img/9paint03.png">
+                                  <img src="http://9front.org/img/9wasntasking.png">
+                                  <img src="http://9front.org/img/9aiju01.png">
+                                  <img src="http://9front.org/img/9nintendo01.png">
+                                  <img src="http://9front.org/img/9inferno01.png">
+                                  <img src="http://9front.org/img/9direction15.png">
+                                  <img src="http://9front.org/img/welcometothetask.png">
+                                  <img src="http://9front.org/img/qr9medium.png">
+                                  <img src="http://9front.org/img/9decisions.png">
+                                  <img src="http://9front.org/img/9communitybowie.png">
+                                  <img src="http://9front.org/img/9dalailamaandmao.png">
+                                  <img src="http://9front.org/img/9computerasfuck.png">
+                                  <img src="http://9front.org/img/9communitykissingerclinton.png">
+                                  <img src="http://9front.org/img/9frontsystempoland1946.png">
+                                  <img src="http://9front.org/img/9directiona3.png">
+                                  <img src="http://9front.org/img/9tupac.png">
+                                  <img src="http://9front.org/img/9frontsystemkids.png">
+                                  <img src="http://9front.org/img/9frontsystemnixon.jpg">
+                                  <img src="http://9front.org/img/9frontsystem.jfk.png">
+                                  <img src="http://9front.org/img/9alps.png">
+                                  <img src="http://9front.org/img/9-come-and-take-it.png">
+                                  <img src="http://9front.org/img/9wreckastow.png">
+                                  <img src="http://9front.org/img/9nabokov.png">
+                                  <img src="http://9front.org/img/9crowd.png">
+                                  <img src="http://9front.org/img/9dirtyhands.png">
+                                  <img src="http://9front.org/img/9choice.png">
+                                  <img src="http://9front.org/img/9fuck_computers.jpg">
+                                  <img src="http://9front.org/img/9community-hackathon.png">
+                                  <img src="http://9front.org/img/9reform.png">
+                                  <img src="http://9front.org/img/9rune.png">
+                                  </div>
+                              </body>
+                          </html>
+                          '';
+                        };
+                      };
+
                       virtualHosts."miloignis.room409.xyz" = {
                         forceSSL = true;
                         enableACME = true;
