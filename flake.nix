@@ -41,9 +41,9 @@
                       main = {
                         #font = "Fira Code:size=8";
                         #font = "JetBrainsMono:size=8";
-                        #font = "Iosevka:size=8";
+                        #font = "Iosevka:size=18";
                         #font = "Monoid:size=6";
-                        font = "Recursive:size=8";
+                        font = "Recursive:size=16";
                         #dpi-aware = "yes";
                       };
                       mouse = {
