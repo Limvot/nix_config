@@ -437,6 +437,15 @@
                   networking.interfaces.eno1.useDHCP = true;
                   networking.interfaces.wlp1s0.useDHCP = true;
                   system.stateVersion = "20.03";
+                  users.extraUsers.marcus = {
+                      name = "marcus";
+                      isNormalUser = true;
+                      group = "users";
+                      extraGroups = [ "wheel" "disk" "audio" "video" "networkmanager" "systemd-journal" "networkmanager" "sway" "plugdev" "adbusers"];
+                      createHome = true;
+                      home = "/home/marcus";
+                      shell = "/run/current-system/sw/bin/bash";
+                  };
                 }))
             ];
         };
@@ -499,6 +508,7 @@
                   services.logind.lidSwitch = "ignore";
                   services.glusterfs.enable = true;
                   networking.hostName = "condoserver"; # Define your hostname.
+
 
                   system.stateVersion = "22.11"; # Did you read the comment?
                 }))
