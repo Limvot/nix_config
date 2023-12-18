@@ -7,9 +7,10 @@
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows =  "nixpkgs";
         };
+        nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     };
 
-    outputs = { self, nixpkgs, home-manager }@attrs:
+    outputs = { self, nixpkgs, home-manager, nixos-hardware }@attrs:
         let
           system = "x86_64-linux";
           homeManagerSharedModule = {
@@ -290,7 +291,7 @@
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip ripgrep imv killall gomuks htop python3
                     waypipe firefox-wayland chromium gnome.nautilus
-                    vlc steam libreoffice calibre foliate transmission-gtk mupdf
+                    vlc mpv steam libreoffice calibre foliate transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
                     sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
@@ -351,6 +352,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                nixos-hardware.nixosModules.framework-13-7040-amd
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.gnome.gnome-tweaks pkgs.vulkan-tools ]) {
@@ -394,6 +396,8 @@
                   #boot.kernelParams = [ "amdgpu.sg_display=0" ];
                   networking.hostName = "nixos-framework"; # Define your hostname.
                   system.stateVersion = "22.11"; # Did you read the comment?
+                  programs.fuse.userAllowOther = true;
+                  services.jellyfin.enable = true;
                   services.fwupd.enable = true;
                   #services.xserver = {
                   #  enable = true;
