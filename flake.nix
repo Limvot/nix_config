@@ -287,14 +287,17 @@
                   # For steam, and Vulkan in general
                   hardware.opengl.driSupport = true;
                   hardware.opengl.driSupport32Bit = true;
+                  hardware.steam-hardware.enable = true;
+                  programs.steam.enable = true;
 
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip ripgrep imv killall gomuks htop python3
                     waypipe firefox-wayland chromium gnome.nautilus
-                    vlc mpv steam libreoffice calibre foliate transmission-gtk mupdf
+                    vlc mpv libreoffice calibre foliate transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
                     sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
+                    monado openxr-loader xrgears
                     (pkgs.writeTextFile {
                       name = "dbus-sway-environment";
                       destination = "/bin/dbus-sway-environment";
