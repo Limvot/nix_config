@@ -22,6 +22,9 @@ output eDP-1 scale 1
 #Output HDMI-A-1 'Goldstar Company Ltd LG TV SSCR2 0x00000101'
 output HDMI-A-1 mode 1920x1080@60Hz
 
+#Output DP-4 'LG Electronics LG TV SSCR2 0x00000101'
+output DP-4 mode 1280x720@60Hz
+
 # reload the configuration file
 bindsym $mod+Shift+q reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)

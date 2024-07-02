@@ -285,19 +285,20 @@
                     };
                   };
                   # For steam, and Vulkan in general
-                  hardware.opengl.driSupport = true;
+                  #hardware.opengl.driSupport = true;
                   hardware.opengl.driSupport32Bit = true;
                   hardware.steam-hardware.enable = true;
                   programs.steam.enable = true;
 
                   environment.systemPackages = with pkgs; [
-                    tmux vim wget curl git w3m iftop iotop killall file unzip zip ripgrep imv killall gomuks htop python3
+                    tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall gomuks htop python3
                     waypipe firefox-wayland chromium gnome.nautilus
                     vlc mpv libreoffice calibre foliate transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
                     sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
-                    monado openxr-loader xrgears
+                    #monado openxr-loader xrgears
+                    lean4 blas elan vscode
                     (pkgs.writeTextFile {
                       name = "dbus-sway-environment";
                       destination = "/bin/dbus-sway-environment";
@@ -358,7 +359,7 @@
                 nixos-hardware.nixosModules.framework-13-7040-amd
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.gnome.gnome-tweaks pkgs.vulkan-tools ]) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.gnome.gnome-tweaks pkgs.vulkan-tools pkgs.openconnect pkgs.blender pkgs.discord]) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
                   
@@ -536,6 +537,22 @@
                   };
                   # END HARDWARE
 
+                  fileSystems."/var/lib/matrix-synapse/media" = {
+                    device = "nathan@100.64.0.1:/home/nathan/synapse_media/media/";
+                    fsType = "sshfs";
+                    options = [
+                      # Filesystem Options
+                      "allow_other"            # non-root access
+                      "_netdev"                # this is a network fs
+                      "x-systemd.automount"    # mount on demand
+
+                      # SSH options
+                      "reconnect"              # handle connection drops
+                      "ServerAliveInterval=15" # Keep connections alive
+                      "IdentityFile=/var/lib/private/sshfs-key"
+                    ];
+                  };
+
                   nix.gc.automatic = true;
                   imports = [ ];
 
@@ -661,15 +678,6 @@
                   #  port = 8888;
                   #};
 
-                  services.matrix-synapse.sliding-sync = {
-                    enable = true;
-                    createDatabase = true;
-                    environmentFile = "/var/lib/private/matrix-sliding-sync/secrets";
-                    settings = {
-                      SYNCV3_SERVER="https://synapse.room409.xyz";
-                    };
-                  };
-
                   services.matrix-synapse = {
                       enable = true;
 
@@ -727,6 +735,7 @@
                   #};
 
                   services.postgresql = {
+                      package = pkgs.postgresql_16;
                       enable = true;
                       # postgresql user and db name in the service.matrix-synapse.databse_args setting is default
                       initialScript = pkgs.writeText "synapse-init.sql" ''
@@ -750,6 +759,7 @@
                   services.ttyd = {
                     enable = true;
                     port = 9134;
+                    writeable = true;
                     username = "miloignis";
                     passwordFile = /var/lib/ttyd/secrets;
                     clientOptions.fontFamily="Recursive";
@@ -804,11 +814,6 @@
                               client_max_body_size 100M;
                               proxy_set_header X-Forwarded-For $remote_addr;
                           '';
-                      };
-                      virtualHosts."syncv3.room409.xyz" = {
-                          forceSSL = true;
-                          enableACME = true;
-                          locations."/".proxyPass = "http://localhost:8009";
                       };
 
                       virtualHosts."element-synapse.room409.xyz" = {
@@ -936,103 +941,6 @@
                                        <li><a href="">📄 Resume/About Me</a></li>
                                     </ol>
                                   </div>
-                                  <br> <br>
-                                  <div class="bodyStuff">
-                                  <img src="http://9front.org/img/9frontfell01.png">
-                                  <img src="http://9front.org/img/9frontfell02.png">
-                                  <img src="http://9front.org/img/9germanengineering01.png">
-                                  <img src="http://9front.org/img/9realemu01.png">
-                                  <img src="http://9front.org/img/9hold01.png">
-                                  <img src="http://9front.org/img/9frontfell03.png">
-                                  <img src="http://9front.org/img/9germanengineering02.png">
-                                  <img src="http://9front.org/img/9frontsystem02.png">
-                                  <img src="http://9front.org/img/9frontsystem03.png">
-                                  <img src="http://9front.org/img/9frontsystem04.png">
-                                  <img src="http://9front.org/img/9frontfell04.png">
-                                  <img src="http://9front.org/img/9cwfs01.png">
-                                  <img src="http://9front.org/img/9boot01.png">
-                                  <img src="http://9front.org/img/9kbdfs01.png">
-                                  <img src="http://9front.org/img/9frontsystem06.png">
-                                  <img src="http://9front.org/img/9frontsystem07.png">
-                                  <img src="http://9front.org/img/9couldfork01.png">
-                                  <img src="http://9front.org/img/9whatdidtheydo01.png">
-                                  <img src="http://9front.org/img/9fossil01.png">
-                                  <img src="http://9front.org/img/9pkg01.png">
-                                  <img src="http://9front.org/img/9boot02.png">
-                                  <img src="http://9front.org/img/9inferno01.png">
-                                  <img src="http://9front.org/img/9community01.png">
-                                  <img src="http://9front.org/img/9timesync01.png">
-                                  <img src="http://9front.org/img/9inferno02.png">
-                                  <img src="http://9front.org/img/9inferno01.png">
-                                  <img src="http://9front.org/img/9inferno01.png">
-                                  <img src="http://9front.org/img/9troll01.png">
-                                  <img src="http://9front.org/img/9pkg02.png">
-                                  <img src="http://9front.org/img/9direction02.png">
-                                  <img src="http://9front.org/img/9community03.png">
-                                  <img src="http://9front.org/img/9inferno01.png">
-                                  <img src="http://9front.org/img/9frontsystem09.png">
-                                  <img src="http://9front.org/img/9mothra01.png">
-                                  <img src="http://9front.org/img/9mothra02.png">
-                                  <img src="http://9front.org/img/9mothra03.png">
-                                  <img src="http://9front.org/img/9mothra04.png">
-                                  <img src="http://9front.org/img/9scram01.png">
-                                  <img src="http://9front.org/img/9frontsystem10.png">
-                                  <img src="http://9front.org/img/9man01.png">
-                                  <img src="http://9front.org/img/9community05.png">
-                                  <img src="http://9front.org/img/9chording01.png">
-                                  <img src="http://9front.org/img/9community06.png">
-                                  <img src="http://9front.org/img/9direction05.png">
-                                  <img src="http://9front.org/img/9paint01.png">
-                                  <img src="http://9front.org/img/9direction07.png">
-                                  <img src="http://9front.org/img/9ken01.png">
-                                  <img src="http://9front.org/img/9catv01.png">
-                                  <img src="http://9front.org/img/901.png">
-                                  <img src="http://9front.org/img/9frontsystem11.png">
-                                  <img src="http://9front.org/img/9troll03.png">
-                                  <img src="http://9front.org/img/9frontfell20.png">
-                                  <img src="http://9front.org/img/9tmove01.png">
-                                  <img src="http://9front.org/img/9codereview01.png">
-                                  <img src="http://9front.org/img/9inferno01.png">
-                                  <img src="http://9front.org/img/9nofork01.png">
-                                  <img src="http://9front.org/img/9iknowthis01.png">
-                                  <img src="http://9front.org/img/9mothra10.png">
-                                  <img src="http://9front.org/img/nixamerica.png">
-                                  <img src="http://9front.org/img/cmonks.png">
-                                  <img src="http://9front.org/img/9sysupdate01.png">
-                                  <img src="http://9front.org/img/9point01.png">
-                                  <img src="http://9front.org/img/drclenrek.png">
-                                  <img src="http://9front.org/img/9times.png">
-                                  <img src="http://9front.org/img/9paint03.png">
-                                  <img src="http://9front.org/img/9wasntasking.png">
-                                  <img src="http://9front.org/img/9aiju01.png">
-                                  <img src="http://9front.org/img/9nintendo01.png">
-                                  <img src="http://9front.org/img/9inferno01.png">
-                                  <img src="http://9front.org/img/9direction15.png">
-                                  <img src="http://9front.org/img/welcometothetask.png">
-                                  <img src="http://9front.org/img/qr9medium.png">
-                                  <img src="http://9front.org/img/9decisions.png">
-                                  <img src="http://9front.org/img/9communitybowie.png">
-                                  <img src="http://9front.org/img/9dalailamaandmao.png">
-                                  <img src="http://9front.org/img/9computerasfuck.png">
-                                  <img src="http://9front.org/img/9communitykissingerclinton.png">
-                                  <img src="http://9front.org/img/9frontsystempoland1946.png">
-                                  <img src="http://9front.org/img/9directiona3.png">
-                                  <img src="http://9front.org/img/9tupac.png">
-                                  <img src="http://9front.org/img/9frontsystemkids.png">
-                                  <img src="http://9front.org/img/9frontsystemnixon.jpg">
-                                  <img src="http://9front.org/img/9frontsystem.jfk.png">
-                                  <img src="http://9front.org/img/9alps.png">
-                                  <img src="http://9front.org/img/9-come-and-take-it.png">
-                                  <img src="http://9front.org/img/9wreckastow.png">
-                                  <img src="http://9front.org/img/9nabokov.png">
-                                  <img src="http://9front.org/img/9crowd.png">
-                                  <img src="http://9front.org/img/9dirtyhands.png">
-                                  <img src="http://9front.org/img/9choice.png">
-                                  <img src="http://9front.org/img/9fuck_computers.jpg">
-                                  <img src="http://9front.org/img/9community-hackathon.png">
-                                  <img src="http://9front.org/img/9reform.png">
-                                  <img src="http://9front.org/img/9rune.png">
-                                  </div>
                               </body>
                           </html>
                           '';
@@ -1124,6 +1032,37 @@
                       config.services.headscale.package
                       #wireguard
                       droopy
+                      sshfs
+
+    #  (let
+    #  # XXX specify the postgresql package you'd like to upgrade to.
+    #  # Do not forget to list the extensions you need.
+    #  newPostgres = pkgs.postgresql_16.withPackages (pp: [
+    #    # pp.plv8
+    #  ]);
+    #in pkgs.writeScriptBin "upgrade-pg-cluster" ''
+    #  set -eux
+    #  # XXX it's perhaps advisable to stop all services that depend on postgresql
+    #  systemctl stop postgresql
+
+    #  export NEWDATA="/var/lib/postgresql/${newPostgres.psqlSchema}"
+
+    #  export NEWBIN="${newPostgres}/bin"
+
+    #  export OLDDATA="${config.services.postgresql.dataDir}"
+    #  export OLDBIN="${config.services.postgresql.package}/bin"
+
+    #  install -d -m 0700 -o postgres -g postgres "$NEWDATA"
+    #  cd "$NEWDATA"
+    #  sudo -u postgres $NEWBIN/initdb -D "$NEWDATA"
+
+    #  sudo -u postgres $NEWBIN/pg_upgrade \
+    #    --old-datadir "$OLDDATA" --new-datadir "$NEWDATA" \
+    #    --old-bindir $OLDBIN --new-bindir $NEWBIN \
+    #    "$@"
+    #'')
+
+
                   ];
                   users.extraUsers.nathan = {
                     name = "nathan";
