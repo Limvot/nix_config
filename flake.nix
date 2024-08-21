@@ -1,4 +1,5 @@
 {
+
     description = "System config";
 
     inputs = {
@@ -293,7 +294,7 @@
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall gomuks htop python3
                     waypipe firefox-wayland chromium gnome.nautilus
-                    vlc mpv libreoffice calibre foliate transmission-gtk mupdf
+                    vlc mpv wayfarer libreoffice calibre foliate transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
                     sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
