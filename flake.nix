@@ -292,7 +292,7 @@
                   programs.steam.enable = true;
 
                   environment.systemPackages = with pkgs; [
-                    tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall gomuks htop python3
+                    tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall gomuks btop htop python3
                     waypipe firefox-wayland chromium gnome.nautilus
                     vlc mpv wayfarer libreoffice calibre foliate transmission-gtk mupdf
                     gimp
@@ -430,6 +430,7 @@
 
                   fileSystems."/" = { device = "/dev/disk/by-uuid/ae8e4a92-53dd-49b5-bf3a-aeb9a109c01e"; fsType = "ext4"; };
                   fileSystems."/boot" = { device = "/dev/disk/by-uuid/28E9-0409"; fsType = "vfat"; };
+                  fileSystems."/nas_disk1" = { device = "/dev/disk/by-uuid/d7907ed2-2aff-4cfc-bb4d-fa46b3f1af57"; fsType = "ext4"; };
                   swapDevices = [ ];
                   # END HARDWARE
 
@@ -437,6 +438,9 @@
                   boot.loader.efi.canTouchEfiVariables = true;
                   boot.kernelPackages = pkgs.linuxPackages_latest;
                   networking.hostName = "nixos4800H"; # Define your hostname.
+
+                  programs.fuse.userAllowOther = true;
+                  services.jellyfin.enable = true;
 
                   # THIS SEEMS CONTRADICTORY
                   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
