@@ -436,6 +436,8 @@
                   boot.loader.systemd-boot.enable = true;
                   boot.loader.efi.canTouchEfiVariables = true;
                   boot.kernelPackages = pkgs.linuxPackages_latest;
+                  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+                  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
                   networking.hostName = "nixos4800H"; # Define your hostname.
 
                   programs.fuse.userAllowOther = true;
