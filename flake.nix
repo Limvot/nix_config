@@ -36,6 +36,76 @@
                     Install.WantedBy = [ "default.target" ];
                   };
 
+                  programs.ghostty = {
+                    enable = true;
+                    settings = {
+                      window-decoration = false;
+                      font-family = "Recursive Mono Linear Static";
+                      font-size = 16;
+                      #theme = "GruvboxDarkHard";
+                      #theme = "Horizon";
+                      #theme = "IC_Green_PPL";
+                      #theme = "IC_Orange_PPL";
+                      #theme = "iceberg-dark";
+                      #theme = "Kanagawa Dragon";
+                      #theme = "Kanagawa Wave";
+                      #theme = "kanagawabones";
+                      #theme = "kurokula";
+                      #theme = "Later This Evening";
+                      #theme = "MaterialDarker";
+                      #theme = "MaterialOcean";
+                      #theme = "matrix";
+                      #theme = "Medallion";
+                      #theme = "Mellifluous";
+                      #theme = "Molokai";
+                      #theme = "MonaLisa";
+                      #theme = "Monokai Remastered";
+                      #theme = "Monokai Soda";
+                      theme = "NightLion v2";
+                      #theme = "niji";
+                      #theme = "Nocturnal Winter";
+                      #theme = "nord";
+                      #theme = "NvimDark";
+                      #theme = "Oceanic-Next";
+                      #theme = "OneHalfDark";
+                      #theme = "Paraiso Dark";
+                      #theme = "PaulMillr";
+                      #theme = "PencilDark";
+                      #theme = "Peppermint";
+                      #theme = "Pnevma";
+                      #theme = "Popping and Locking";
+                      #theme = "Red Planet";
+                      #theme = "rose-pine";
+                      #theme = "Ryuuko";
+                      #theme = "SeaShells";
+                      #theme = "Seti";
+                      #theme = "Shaman";
+                      #theme = "Slate";
+                      #theme = "Smyck";
+                      #theme = "Snazzy";
+                      #theme = "SoftServer";
+                      #theme = "Solarized Dark - Patched";
+                      #theme = "Solarized Dark Higher Contrast";
+                      #theme = "SpaceGray Bright";
+                      #theme = "SpaceGray Eighties";
+                      #theme = "SpaceGray Eighties Dull";
+                      #theme = "terafox";
+                      #theme = "Thayer Bright";
+                      #theme = "Tinacious Design (Dark)";
+                      #theme = "tokyonight";
+                      #theme = "tokyonight-storm";
+                      #theme = "Tomorrow Night Burns";
+                      #theme = "UltraViolent";
+                      #theme = "Violet Dark";
+                      #theme = "Whimsy";
+                      #theme = "WildCherry";
+                      #theme = "wilmersdorf";
+                      #theme = "Wombat";
+                      #theme = "xcodewwdc";
+                      #theme = "zenbones_dark";
+                      #theme = "zenwritten_dark";
+                    };
+                  };
                   programs.foot = {
                     enable = true;
                     settings = {
@@ -44,7 +114,7 @@
                         #font = "JetBrainsMono:size=8";
                         #font = "Iosevka:size=18";
                         #font = "Monoid:size=6";
-                        font = "Recursive:size=16";
+                        font = "Recursive:size=16"; # seems to be Recursive Mono Linear Static in Ghostty
                         #dpi-aware = "yes";
                       };
                       mouse = {
@@ -255,7 +325,7 @@
                     enable = true;
                     wlr.enable = true;
                     extraPortals = [pkgs.xdg-desktop-portal-gtk ];
-                    gtkUsePortal = true;
+                    #gtkUsePortal = true;
                   };
 
                   hardware.bluetooth.enable = true;
@@ -291,14 +361,16 @@
                   programs.steam.enable = true;
 
                   environment.systemPackages = with pkgs; [
-                    tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall gomuks btop htop python3
-                    waypipe firefox-wayland chromium gnome.nautilus
-                    vlc mpv libreoffice calibre foliate transmission-gtk mupdf
+                    tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall
+                    btop htop python3
+                    waypipe firefox-wayland chromium nautilus
+                    vlc mpv wayfarer libreoffice calibre foliate #transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
-                    sway wayland glib dracula-theme gnome.adwaita-icon-theme swaylock swayidle wl-clipboard
+                    sway wayland glib dracula-theme adwaita-icon-theme swaylock swayidle wl-clipboard
+                    circumflex
                     #monado openxr-loader xrgears
-                    lean4 blas elan vscode
+                    #lean4 blas elan vscode
                     (pkgs.writeTextFile {
                       name = "dbus-sway-environment";
                       destination = "/bin/dbus-sway-environment";
@@ -359,7 +431,7 @@
                 nixos-hardware.nixosModules.framework-13-7040-amd
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.gnome.gnome-tweaks pkgs.vulkan-tools pkgs.openconnect pkgs.blender pkgs.discord]) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.vulkan-tools pkgs.discord]) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
                   
@@ -758,7 +830,7 @@
                     address = "0.0.0.0";
                     port = 8789;
                     settings.serverUrl = "https://headscale.room409.xyz";
-                    settings.dns_config.baseDomain = "wg.test";
+                    settings.dns.base_domain = "wg.test";
                     settings.logtail.enabled = false;
                   };
 
@@ -1022,11 +1094,23 @@
                         };
                       };
 
+                      virtualHosts."batou.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/".proxyPass = "http://100.64.0.1:8090";
+                      };
+
                       #virtualHosts."4800H.room409.xyz" = {
                       #  forceSSL = true;
                       #  enableACME = true;
                       #  locations."/".proxyPass = "http://10.100.0.7:80";
                       #};
+                      virtualHosts."neel.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        basicAuth = { neel = "el_psy_congroo"; };
+                        locations."/".proxyPass = "http://100.64.0.1:8080";
+                      };
                   };
 
                   services.journald.extraConfig = "SystemMaxUse=50M";
