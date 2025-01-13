@@ -3,6 +3,10 @@
 
     inputs = {
         nixpkgs.url = "nixpkgs/nixos-unstable";
+        niri = {
+            url = "github:sodiboo/niri-flake";
+            inputs.nixpkgs.follows =  "nixpkgs";
+        };
         home-manager = {
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows =  "nixpkgs";
@@ -10,7 +14,7 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     };
 
-    outputs = { self, nixpkgs, home-manager, nixos-hardware }@attrs:
+    outputs = { self, nixpkgs, niri, home-manager, nixos-hardware }@attrs:
         let
           system = "x86_64-linux";
           homeManagerSharedModule = {
@@ -34,6 +38,82 @@
                     Unit.After = [ "network.target" "sound.target" ];
                     Service.ExecStart = "${pkgs.bluez}/bin/mpris-proxy";
                     Install.WantedBy = [ "default.target" ];
+                  };
+
+                  programs.niri.settings = {
+                    prefer-no-csd = true;
+                    input.keyboard.xkb = {
+                      options = "ctrl:nocaps";
+                    };
+                    binds = with config.lib.niri.actions; {
+                      "Alt+P".action = spawn "bemenu-run";
+                      "Alt+Return".action = spawn "ghostty";
+                      "Alt+Shift+Return".action = spawn "foot";
+                      "Alt+Shift+Slash".action = show-hotkey-overlay;
+
+                      "Alt+Q".action = close-window;
+
+                      "Alt+Left"  .action = focus-column-left;
+                      "Alt+Down"  .action = focus-window-down;
+                      "Alt+Up"    .action = focus-window-up;
+                      "Alt+Right" .action = focus-column-right;
+                      "Alt+H"     .action = focus-column-left;
+                      "Alt+J"     .action = focus-window-down;
+                      "Alt+K"     .action = focus-window-up;
+                      "Alt+L"     .action = focus-column-right;
+
+                      "Alt+Shift+Left"  .action = move-column-left;
+                      "Alt+Shift+Down"  .action = move-window-down;
+                      "Alt+Shift+Up"    .action = move-window-up;
+                      "Alt+Shift+Right" .action = move-column-right;
+                      "Alt+Shift+H"     .action = move-column-left;
+                      "Alt+Shift+J"     .action = move-window-down;
+                      "Alt+Shift+K"     .action = move-window-up;
+                      "Alt+Shift+L"     .action = move-column-right;
+
+                      #...
+                      "Alt+1".action = focus-workspace 1;
+                      "Alt+2".action = focus-workspace 2;
+                      "Alt+3".action = focus-workspace 3;
+                      "Alt+4".action = focus-workspace 4;
+                      "Alt+5".action = focus-workspace 5;
+                      "Alt+6".action = focus-workspace 6;
+                      "Alt+7".action = focus-workspace 7;
+                      "Alt+8".action = focus-workspace 8;
+                      "Alt+9".action = focus-workspace 9;
+                      "Alt+Shift+1".action = move-column-to-workspace 1;
+                      "Alt+Shift+2".action = move-column-to-workspace 2;
+                      "Alt+Shift+3".action = move-column-to-workspace 3;
+                      "Alt+Shift+4".action = move-column-to-workspace 4;
+                      "Alt+Shift+5".action = move-column-to-workspace 5;
+                      "Alt+Shift+6".action = move-column-to-workspace 6;
+                      "Alt+Shift+7".action = move-column-to-workspace 7;
+                      "Alt+Shift+8".action = move-column-to-workspace 8;
+                      "Alt+Shift+9".action = move-column-to-workspace 9;
+
+
+                      "Alt+R".action = switch-preset-column-width;
+                      "Alt+Shift+R".action = switch-preset-window-height;
+                      "Alt+Ctrl+R".action = reset-window-height;
+                      "Alt+F".action = maximize-column;
+                      "Alt+Shift+F".action = fullscreen-window;
+                      "Alt+C".action = center-column;
+
+                      "Alt+Minus".action = set-column-width "-10%";
+                      "Alt+Equal".action = set-column-width "+10%";
+
+                      "Alt+Shift+Minus".action = set-window-height "-10%";
+                      "Alt+Shift+Equal".action = set-window-height "+10%";
+
+                      #"Print".action = screenshot;
+                      #"Ctrl+Print".aciton = screenshot-screen;
+                      #"Alt+Print".action = screenshot-window;
+
+                      "Alt+Shift+E".action = quit;
+                      "Ctrl+Alt+Delete".action = quit;
+
+                      "Alt+Shift+P".action = power-off-monitors;
+                    };
                   };
 
                   programs.ghostty = {
@@ -334,6 +414,10 @@
                   services.printing.enable = true;
                   services.printing.drivers = [ pkgs.brlaser ];
 
+                  programs.niri = {
+                    enable = true;
+                    package = pkgs.niri;
+                  };
                   programs.sway = {
                     enable = true;
                     wrapperFeatures.gtk = true;
@@ -429,6 +513,7 @@
             specialArgs = attrs;
             modules = [
                 nixos-hardware.nixosModules.framework-13-7040-amd
+                niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.vulkan-tools pkgs.discord]) {
@@ -487,6 +572,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince ]) {
@@ -537,6 +623,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs []) {
@@ -571,6 +658,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs []) {
