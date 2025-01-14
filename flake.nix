@@ -31,7 +31,7 @@
                   home.stateVersion = "22.11";
                   
                   fonts.fontconfig.enable = true;
-                  home.packages = with pkgs; [ fira-code jetbrains-mono iosevka monoid recursive ];
+                  home.packages = with pkgs; [ fira-code jetbrains-mono iosevka monoid recursive swww xwayland-satellite ];
 
                   systemd.user.services.mpris-proxy = {
                     Unit.Description = "Mpris proxy";
@@ -40,10 +40,155 @@
                     Install.WantedBy = [ "default.target" ];
                   };
 
+                  programs.waybar = {
+                    # This is to fix backlight if it freaking worked
+                    # remove when upgraded from 0.11
+                    # PR this is based on is https://github.com/Alexays/Waybar/pull/3808
+                    package = pkgs.waybar.overrideAttrs (old: {
+                      postUnpack = (builtins.elemAt old.postUnpack 0) + ''
+                        pushd "$sourceRoot"
+                        sed -i 's#/org/freedesktop/login1/session/self#/org/freedesktop/login1/session/auto#' ./src/util/backlight_backend.cpp 
+                        popd
+                      '';
+                    });
+
+                    enable = true;
+                    settings = {
+                      mainBar = {
+                        layer = "top";
+                        position = "top";
+                        height = 18;
+                        modules-left = [ "memory" "disk" "network" ];
+                        modules-center = [ "clock" ];
+                        modules-right = [ "battery" "power-profiles-daemon" "backlight" "pulseaudio" ];
+                        reload_style_on_change = true;
+                      };
+                    };
+                    style = ''
+                      * {
+                      /*
+                        border: none;
+                        border-radius: 0;
+                      */
+                        font-family: Recursive;
+                      }
+                      window#waybar {
+                        background: transparent;
+                        color: #ffffff;
+                      }
+                      button {
+                        box-shadow: none;
+                        border: none;
+                        border-radius: 0;
+                        transition-property: none;
+                      }
+                      #workspaces button {
+                        padding: 0 5px;
+                        background-color: transparent;
+                        color: #ffffff;
+                      }
+                      #mode {
+                        background-color: #64829D;
+                        border-bottom: 3px solid #ffffff;
+                      }
+                      #memory, #disk, #network, #pulseaudio, #battery, #power-profiles-daemon, #backlight, #clock {
+                        padding: 0 10px;
+                        color: #f0f0ff;
+                        background-color: rgba(30,30,46,0.6);
+                        border-radius: 99px;
+                        margin-left: 4px;
+                      }
+                      #window, #workspaces {
+                        margin: 0 4px;
+                      }
+                      #clock {
+                        font-weight: bold;
+                      }
+                      #battery {
+                        margin-left: 4px;
+                      }
+                      #pulseaudio {
+                        color: #000000;
+                        background-color: #f1c40f;
+                      }
+                    '';
+                  };
+
                   programs.niri.settings = {
                     prefer-no-csd = true;
                     input.keyboard.xkb = {
                       options = "ctrl:nocaps";
+                    };
+                    environment = {
+                      DISPLAY = ":0"; # xwayland-satellite
+                    };
+                    spawn-at-startup = [
+                      { command = [ "swww-daemon" ]; }
+                      { command = [ "waybar" ]; }
+                      { command = [ "xwayland-satellite" ]; }
+                    ];
+                    window-rules = [
+                      {
+                        draw-border-with-background = false;
+                        geometry-corner-radius = let r = 4.0; in {
+                          top-left = r;
+                          top-right = r;
+                          bottom-left = r;
+                          bottom-right = r;
+                        };
+                        clip-to-geometry = true;
+                      }
+                      {
+                        matches = [{is-focused = false;}];
+                        opacity = 0.95;
+                      }
+                    ];
+                    layout = {
+                      #gaps = 8;
+                      gaps = 16;
+                      center-focused-column = "never";
+                      preset-column-widths = [
+                        { proportion = 1.0 / 3.0; }
+                        { proportion = 1.0 / 2.0; }
+                        { proportion = 2.0 / 3.0; }
+                      ];
+                      #If you leave the brackets empty, the windows themselves will decide their initial width.
+                      #preset-window-heights = {};
+                      default-column-width = { proportion = 1.0 / 2.0; };
+                      focus-ring = {
+                        enable = false;
+                        width = 8;
+                        # Color of the ring on the active monitor.
+                        active.color = "#7fc8ff";
+                        # Color of the ring on inactive monitors.
+                        inactive.color = "#505050";
+                      };
+                      border = {
+                        enable = true;
+                        width = 4;
+                        active = {
+                          gradient = {
+                            angle = 130;
+                            relative-to = "workspace-view";
+                            from = "#90F090";
+                            to   = "#909090";
+                          };
+                        };
+                        inactive = {
+                          gradient = {
+                            angle = 130;
+                            relative-to = "workspace-view";
+                            from = "#409040";
+                            to   = "#404040";
+                          };
+                        };
+                      };
+                      #struts = {
+                        #left   = 64;
+                        #right  = 64;
+                        #top    = 64;
+                        #bottom = 64;
+                      #};
                     };
                     binds = with config.lib.niri.actions; {
                       "Alt+P".action = spawn "bemenu-run";
@@ -51,15 +196,15 @@
                       "Alt+Shift+Return".action = spawn "foot";
                       "Alt+Shift+Slash".action = show-hotkey-overlay;
 
-                      "Alt+Q".action = close-window;
+                      "Alt+Shift+C".action = close-window;
 
                       "Alt+Left"  .action = focus-column-left;
                       "Alt+Down"  .action = focus-window-down;
                       "Alt+Up"    .action = focus-window-up;
                       "Alt+Right" .action = focus-column-right;
                       "Alt+H"     .action = focus-column-left;
-                      "Alt+J"     .action = focus-window-down;
-                      "Alt+K"     .action = focus-window-up;
+                      #"Alt+J"     .action = focus-window-down;
+                      #"Alt+K"     .action = focus-window-up;
                       "Alt+L"     .action = focus-column-right;
 
                       "Alt+Shift+Left"  .action = move-column-left;
@@ -67,9 +212,35 @@
                       "Alt+Shift+Up"    .action = move-window-up;
                       "Alt+Shift+Right" .action = move-column-right;
                       "Alt+Shift+H"     .action = move-column-left;
-                      "Alt+Shift+J"     .action = move-window-down;
-                      "Alt+Shift+K"     .action = move-window-up;
+                      #"Alt+Shift+J"     .action = move-window-down;
+                      #"Alt+Shift+K"     .action = move-window-up;
                       "Alt+Shift+L"     .action = move-column-right;
+
+                      # Nice alts
+                      "Alt+J"      .action = focus-window-or-workspace-down;
+                      "Alt+K"      .action = focus-window-or-workspace-up;
+                      "Alt+Shift+J".action = move-window-down-or-to-workspace-down;
+                      "Alt+Shift+K".action = move-window-up-or-to-workspace-up;
+
+
+                      "Alt+Ctrl+Left" .action = focus-monitor-left;
+                      "Alt+Ctrl+Down" .action = focus-monitor-down;
+                      "Alt+Ctrl+Up"   .action = focus-monitor-up;
+                      "Alt+Ctrl+Right".action = focus-monitor-right;
+                      "Alt+Ctrl+H"    .action = focus-monitor-left;
+                      "Alt+Ctrl+J"    .action = focus-monitor-down;
+                      "Alt+Ctrl+K"    .action = focus-monitor-up;
+                      "Alt+Ctrl+L"    .action = focus-monitor-right;
+
+                      "Alt+Shift+Ctrl+Left"  .action = move-column-to-monitor-left;
+                      "Alt+Shift+Ctrl+Down"  .action = move-column-to-monitor-down;
+                      "Alt+Shift+Ctrl+Up"    .action = move-column-to-monitor-up;
+                      "Alt+Shift+Ctrl+Right" .action = move-column-to-monitor-right;
+                      "Alt+Shift+Ctrl+H"     .action = move-column-to-monitor-left;
+                      "Alt+Shift+Ctrl+J"     .action = move-column-to-monitor-down;
+                      "Alt+Shift+Ctrl+K"     .action = move-column-to-monitor-up;
+                      "Alt+Shift+Ctrl+L"     .action = move-column-to-monitor-right;
+
 
                       #...
                       "Alt+1".action = focus-workspace 1;
@@ -91,6 +262,14 @@
                       "Alt+Shift+8".action = move-column-to-workspace 8;
                       "Alt+Shift+9".action = move-column-to-workspace 9;
 
+                      #Consume one window from the right into the focused column.
+                      "Alt+Comma"  .action = consume-window-into-column;
+                      #Expel one window from the focused column to the right.
+                      "Alt+Period" .action = expel-window-from-column;
+
+                      #There are also commands that consume or expel a single window to the side.
+                      "Alt+BracketLeft"  .action = consume-or-expel-window-left;
+                      "Alt+BracketRight" .action = consume-or-expel-window-right;
 
                       "Alt+R".action = switch-preset-column-width;
                       "Alt+Shift+R".action = switch-preset-window-height;
@@ -121,7 +300,7 @@
                     settings = {
                       window-decoration = false;
                       font-family = "Recursive Mono Linear Static";
-                      font-size = 16;
+                      font-size = 11;
                       #theme = "GruvboxDarkHard";
                       #theme = "Horizon";
                       #theme = "IC_Green_PPL";
@@ -486,7 +665,6 @@
                           '';
                     })
                   ] ++ specificPkgs;
-                  programs.waybar.enable = true;
 
                   # kanshi systemd service
                   systemd.user.services.kanshi = {
