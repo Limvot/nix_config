@@ -3,6 +3,7 @@
 
     inputs = {
         nixpkgs.url = "nixpkgs/nixos-unstable";
+        stylix.url = "github:danth/stylix";
         niri = {
             url = "github:sodiboo/niri-flake";
             inputs.nixpkgs.follows =  "nixpkgs";
@@ -14,7 +15,7 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     };
 
-    outputs = { self, nixpkgs, niri, home-manager, nixos-hardware }@attrs:
+    outputs = { self, nixpkgs, stylix, niri, home-manager, nixos-hardware }@attrs:
         let
           system = "x86_64-linux";
           homeManagerSharedModule = {
@@ -40,6 +41,8 @@
                     Install.WantedBy = [ "default.target" ];
                   };
 
+                  programs.fuzzel.enable = true;
+
                   programs.waybar = {
                     # This is to fix backlight if it freaking worked
                     # remove when upgraded from 0.11
@@ -64,54 +67,54 @@
                         reload_style_on_change = true;
                       };
                     };
-                    style = ''
-                      * {
-                      /*
-                        border: none;
-                        border-radius: 0;
-                      */
-                        font-family: Recursive;
-                      }
-                      window#waybar {
-                        background: transparent;
-                        color: #ffffff;
-                      }
-                      button {
-                        box-shadow: none;
-                        border: none;
-                        border-radius: 0;
-                        transition-property: none;
-                      }
-                      #workspaces button {
-                        padding: 0 5px;
-                        background-color: transparent;
-                        color: #ffffff;
-                      }
-                      #mode {
-                        background-color: #64829D;
-                        border-bottom: 3px solid #ffffff;
-                      }
-                      #memory, #disk, #network, #pulseaudio, #battery, #power-profiles-daemon, #backlight, #clock {
-                        padding: 0 10px;
-                        color: #f0f0ff;
-                        background-color: rgba(30,30,46,0.6);
-                        border-radius: 99px;
-                        margin-left: 4px;
-                      }
-                      #window, #workspaces {
-                        margin: 0 4px;
-                      }
-                      #clock {
-                        font-weight: bold;
-                      }
-                      #battery {
-                        margin-left: 4px;
-                      }
-                      #pulseaudio {
-                        color: #000000;
-                        background-color: #f1c40f;
-                      }
-                    '';
+                    #style = ''
+                    #  * {
+                    #  /*
+                    #    border: none;
+                    #    border-radius: 0;
+                    #  */
+                    #    font-family: Recursive;
+                    #  }
+                    #  window#waybar {
+                    #    background: transparent;
+                    #    color: #ffffff;
+                    #  }
+                    #  button {
+                    #    box-shadow: none;
+                    #    border: none;
+                    #    border-radius: 0;
+                    #    transition-property: none;
+                    #  }
+                    #  #workspaces button {
+                    #    padding: 0 5px;
+                    #    background-color: transparent;
+                    #    color: #ffffff;
+                    #  }
+                    #  #mode {
+                    #    background-color: #64829D;
+                    #    border-bottom: 3px solid #ffffff;
+                    #  }
+                    #  #memory, #disk, #network, #pulseaudio, #battery, #power-profiles-daemon, #backlight, #clock {
+                    #    padding: 0 10px;
+                    #    color: #f0f0ff;
+                    #    background-color: rgba(30,30,46,0.6);
+                    #    border-radius: 99px;
+                    #    margin-left: 4px;
+                    #  }
+                    #  #window, #workspaces {
+                    #    margin: 0 4px;
+                    #  }
+                    #  #clock {
+                    #    font-weight: bold;
+                    #  }
+                    #  #battery {
+                    #    margin-left: 4px;
+                    #  }
+                    #  #pulseaudio {
+                    #    color: #000000;
+                    #    background-color: #f1c40f;
+                    #  }
+                    #'';
                   };
 
                   programs.niri.settings = {
@@ -155,34 +158,34 @@
                       #If you leave the brackets empty, the windows themselves will decide their initial width.
                       #preset-window-heights = {};
                       default-column-width = { proportion = 1.0 / 2.0; };
-                      focus-ring = {
-                        enable = false;
-                        width = 8;
-                        # Color of the ring on the active monitor.
-                        active.color = "#7fc8ff";
-                        # Color of the ring on inactive monitors.
-                        inactive.color = "#505050";
-                      };
-                      border = {
-                        enable = true;
-                        width = 4;
-                        active = {
-                          gradient = {
-                            angle = 130;
-                            relative-to = "workspace-view";
-                            from = "#90F090";
-                            to   = "#909090";
-                          };
-                        };
-                        inactive = {
-                          gradient = {
-                            angle = 130;
-                            relative-to = "workspace-view";
-                            from = "#409040";
-                            to   = "#404040";
-                          };
-                        };
-                      };
+                      #focus-ring = {
+                      #  enable = false;
+                      #  width = 8;
+                      #  # Color of the ring on the active monitor.
+                      #  active.color = "#7fc8ff";
+                      #  # Color of the ring on inactive monitors.
+                      #  inactive.color = "#505050";
+                      #};
+                      #border = {
+                      #  enable = true;
+                      #  width = 4;
+                      #  active = {
+                      #    gradient = {
+                      #      angle = 130;
+                      #      relative-to = "workspace-view";
+                      #      from = "#90F090";
+                      #      to   = "#909090";
+                      #    };
+                      #  };
+                      #  inactive = {
+                      #    gradient = {
+                      #      angle = 130;
+                      #      relative-to = "workspace-view";
+                      #      from = "#409040";
+                      #      to   = "#404040";
+                      #    };
+                      #  };
+                      #};
                       #struts = {
                         #left   = 64;
                         #right  = 64;
@@ -191,7 +194,8 @@
                       #};
                     };
                     binds = with config.lib.niri.actions; {
-                      "Alt+P".action = spawn "bemenu-run";
+                      #"Alt+P".action = spawn "bemenu-run";
+                      "Alt+P".action = spawn "fuzzel";
                       "Alt+Return".action = spawn "ghostty";
                       "Alt+Shift+Return".action = spawn "foot";
                       "Alt+Shift+Slash".action = show-hotkey-overlay;
@@ -320,7 +324,9 @@
                       #theme = "MonaLisa";
                       #theme = "Monokai Remastered";
                       #theme = "Monokai Soda";
-                      theme = "NightLion v2";
+
+                      #theme = "NightLion v2";
+
                       #theme = "niji";
                       #theme = "Nocturnal Winter";
                       #theme = "nord";
@@ -373,7 +379,7 @@
                         #font = "JetBrainsMono:size=8";
                         #font = "Iosevka:size=18";
                         #font = "Monoid:size=6";
-                        font = "Recursive:size=16"; # seems to be Recursive Mono Linear Static in Ghostty
+                        #font = "Recursive:size=16"; # seems to be Recursive Mono Linear Static in Ghostty
                         #dpi-aware = "yes";
                       };
                       mouse = {
@@ -593,6 +599,22 @@
                   services.printing.enable = true;
                   services.printing.drivers = [ pkgs.brlaser ];
 
+                  stylix = {
+                    enable = true;
+                    #image = /home/nathan/Wallpapers/walls/green-tea.jpg;
+                    image = pkgs.fetchurl {
+                      url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
+                      sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
+                    };
+                    polarity = "dark";
+                    fonts = {
+                      # hehe casual as serif
+                      serif     = { package = pkgs.recursive; name = "Recursive Sans Casual Static"; };
+                      sansSerif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
+                      monospace = { package = pkgs.recursive; name = "Recursive Mono Linear Static"; };
+                      emoji     = { package = pkgs.noto-fonts-emoji; name = "Noto Color Emoji"; };
+                    };
+                  };
                   programs.niri = {
                     enable = true;
                     package = pkgs.niri;
@@ -691,6 +713,7 @@
             specialArgs = attrs;
             modules = [
                 nixos-hardware.nixosModules.framework-13-7040-amd
+                stylix.nixosModules.stylix
                 niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
