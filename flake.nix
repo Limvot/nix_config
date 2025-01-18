@@ -18,6 +18,27 @@
     outputs = { self, nixpkgs, stylix, niri, home-manager, nixos-hardware }@attrs:
         let
           system = "x86_64-linux";
+          make_besley = pkgs:(lib: (pkgs.stdenvNoCC.mkDerivation rec {
+                      pname = "besley";
+                      version = "4.0";
+                      src = pkgs.fetchFromGitHub {
+                          owner = "indestructible-type";
+                          repo = "Besley";
+                          rev = "99d5b97fcb863c4a667571ac8f86f745c345d3ab";
+                          sha256 = "sha256-N6QU3Pd6EnIrdbRtDT3mW5ny683DBWo0odADJBSdA2E=";
+                      };
+                      installPhase = ''
+                        install -D -t $out/share/fonts/opentype/ $(find $src -type f -name '*.otf')
+                        install -D -t $out/share/fonts/truetype/ $(find $src -type f -name '*.ttf')
+                      '';
+                      meta = with lib; {
+                        homepage = "https://indestructibletype.com/Besley.html";
+                        description = "by indestructable-type";
+                        license = licenses.ofl;
+                        maintainers = [ ];
+                        platforms = platforms.all;
+                      };
+                    }));
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
               home-manager.users.nathan = { config, pkgs, lib, ... }:{ 
@@ -32,7 +53,10 @@
                   home.stateVersion = "22.11";
                   
                   fonts.fontconfig.enable = true;
-                  home.packages = with pkgs; [ fira-code jetbrains-mono iosevka monoid recursive swww xwayland-satellite ];
+                  home.packages = with pkgs; [
+                    fira-code jetbrains-mono iosevka monoid recursive inter (make_besley pkgs lib)
+                    xwayland-satellite swww
+                  ]; 
 
                   systemd.user.services.mpris-proxy = {
                     Unit.Description = "Mpris proxy";
@@ -67,54 +91,56 @@
                         reload_style_on_change = true;
                       };
                     };
-                    #style = ''
-                    #  * {
-                    #  /*
-                    #    border: none;
-                    #    border-radius: 0;
-                    #  */
-                    #    font-family: Recursive;
-                    #  }
-                    #  window#waybar {
-                    #    background: transparent;
-                    #    color: #ffffff;
-                    #  }
-                    #  button {
-                    #    box-shadow: none;
-                    #    border: none;
-                    #    border-radius: 0;
-                    #    transition-property: none;
-                    #  }
-                    #  #workspaces button {
-                    #    padding: 0 5px;
-                    #    background-color: transparent;
-                    #    color: #ffffff;
-                    #  }
-                    #  #mode {
-                    #    background-color: #64829D;
-                    #    border-bottom: 3px solid #ffffff;
-                    #  }
-                    #  #memory, #disk, #network, #pulseaudio, #battery, #power-profiles-daemon, #backlight, #clock {
-                    #    padding: 0 10px;
-                    #    color: #f0f0ff;
-                    #    background-color: rgba(30,30,46,0.6);
-                    #    border-radius: 99px;
-                    #    margin-left: 4px;
-                    #  }
-                    #  #window, #workspaces {
-                    #    margin: 0 4px;
-                    #  }
-                    #  #clock {
-                    #    font-weight: bold;
-                    #  }
-                    #  #battery {
-                    #    margin-left: 4px;
-                    #  }
-                    #  #pulseaudio {
-                    #    color: #000000;
-                    #    background-color: #f1c40f;
-                    #  }
-                    #'';
+                    style = ''
+                      /*
+                      * {
+                        border: none;
+                        border-radius: 0;
+                        font-family: Recursive;
+                      }
+                      */
+                      window#waybar {
+                        background: transparent;
+                        color: #ffffff;
+                      }
+                      button {
+                        box-shadow: none;
+                        border: none;
+                        border-radius: 0;
+                        transition-property: none;
+                      }
+                      #workspaces button {
+                        padding: 0 5px;
+                        background-color: transparent;
+                        color: #ffffff;
+                      }
+                      #mode {
+                        background-color: #64829D;
+                        border-bottom: 3px solid #ffffff;
+                      }
+                      #memory, #disk, #network, #pulseaudio, #battery, #power-profiles-daemon, #backlight, #clock {
+                        padding: 0 10px;
+                        color: #f0f0ff;
+                        background-color: rgba(30,30,46,0.6);
+                        border-radius: 99px;
+                        margin-left: 4px;
+                      }
+                      #window, #workspaces {
+                        margin: 0 4px;
+                      }
+                      #clock {
+                        font-weight: bold;
+                      }
+                      #battery {
+                        margin-left: 4px;
+                      }
+                      /*
+                      #pulseaudio {
+                        color: #000000;
+                        background-color: #f1c40f;
+                      }
+                      */
+                    '';
                   };
 
                   programs.niri.settings = {
@@ -127,6 +153,7 @@
                     };
                     spawn-at-startup = [
                       { command = [ "swww-daemon" ]; }
+                      { command = [ "swww" "img" "${config.stylix.image}" ]; }
                       { command = [ "waybar" ]; }
                       { command = [ "xwayland-satellite" ]; }
                     ];
@@ -303,8 +330,8 @@
                     enable = true;
                     settings = {
                       window-decoration = false;
-                      font-family = "Recursive Mono Linear Static";
-                      font-size = 11;
+                      #font-family = "Recursive Mono Linear Static";
+                      #font-size = 11;
                       #theme = "GruvboxDarkHard";
                       #theme = "Horizon";
                       #theme = "IC_Green_PPL";
@@ -602,15 +629,19 @@
                   stylix = {
                     enable = true;
                     #image = /home/nathan/Wallpapers/walls/green-tea.jpg;
-                    image = pkgs.fetchurl {
-                      url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
-                      sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
-                    };
+                    #image = ./cherry_tree.jpg;
+                    #image = ./skyscraper.jpg;
+                    image = ./village.jpg;
+                    #image = pkgs.fetchurl {
+                    #  url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
+                    #  sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
+                    #};
                     polarity = "dark";
                     fonts = {
                       # hehe casual as serif
-                      serif     = { package = pkgs.recursive; name = "Recursive Sans Casual Static"; };
-                      sansSerif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
+                      serif     = { package = (make_besley pkgs lib); name = "Besley"; };
+                      #sansSerif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
+                      sansSerif = { package = pkgs.inter; name = "Inter"; };
                       monospace = { package = pkgs.recursive; name = "Recursive Mono Linear Static"; };
                       emoji     = { package = pkgs.noto-fonts-emoji; name = "Noto Color Emoji"; };
                     };
@@ -759,7 +790,7 @@
                   networking.hostName = "nixos-framework"; # Define your hostname.
                   system.stateVersion = "22.11"; # Did you read the comment?
                   programs.fuse.userAllowOther = true;
-                  services.jellyfin.enable = true;
+                  #services.jellyfin.enable = true;
                   services.fwupd.enable = true;
                   #services.xserver = {
                   #  enable = true;
@@ -853,7 +884,7 @@
                   networking.hostName = "nixos-desktop"; # Define your hostname.
                   system.stateVersion = "22.11";
 
-                  services.jellyfin.enable = true;
+                  #services.jellyfin.enable = true;
                 }))
             ];
         };
@@ -1215,17 +1246,17 @@
                           proxyWebsockets = true;
                         };
                       };
-                      virtualHosts."drop.room409.xyz" = {
-                        forceSSL = true;
-                        enableACME = true;
-                        locations."/" = {
-                          proxyPass = "http://localhost:9009";
-                          proxyWebsockets = true;
-                          extraConfig = ''
-                              client_max_body_size 500M;
-                          '';
-                        };
-                      };
+                      #virtualHosts."drop.room409.xyz" = {
+                        #forceSSL = true;
+                        #enableACME = true;
+                        #locations."/" = {
+                          #proxyPass = "http://localhost:9009";
+                          #proxyWebsockets = true;
+                          #extraConfig = ''
+                              #client_max_body_size 500M;
+                          #'';
+                        #};
+                      #};
                       #virtualHosts."www.kraken-lang.org" = {
                       #  forceSSL = true;
                       #  enableACME = true;
@@ -1394,11 +1425,10 @@
                       #  enableACME = true;
                       #  locations."/".proxyPass = "http://10.100.0.7:80";
                       #};
-                      virtualHosts."neel.room409.xyz" = {
+                      virtualHosts."batou_jf.room409.xyz" = {
                         forceSSL = true;
                         enableACME = true;
-                        basicAuth = { neel = "el_psy_congroo"; };
-                        locations."/".proxyPass = "http://100.64.0.1:8080";
+                        locations."/".proxyPass = "http://100.64.0.1:8096";
                       };
                   };
 
