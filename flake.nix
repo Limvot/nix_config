@@ -1425,7 +1425,7 @@
                       #  enableACME = true;
                       #  locations."/".proxyPass = "http://10.100.0.7:80";
                       #};
-                      virtualHosts."batou_jf.room409.xyz" = {
+                      virtualHosts."batou-jf.room409.xyz" = {
                         forceSSL = true;
                         enableACME = true;
                         locations."/".proxyPass = "http://100.64.0.1:8096";
