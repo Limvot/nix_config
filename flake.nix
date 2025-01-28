@@ -3,7 +3,13 @@
 
     inputs = {
         nixpkgs.url = "nixpkgs/nixos-unstable";
-        stylix.url = "github:danth/stylix";
+        stylix = {
+          #url = "github:danth/stylix";
+          #url = "github:trueNAHO/stylix/stylix-downgrade-and-lock-base16-vim-input";
+          url = "github:danth/stylix/2985ee9b2836a725b04628d24f934212b96eacbe";
+          inputs.nixpkgs.follows =  "nixpkgs";
+        };
+
         niri = {
             url = "github:sodiboo/niri-flake";
             inputs.nixpkgs.follows =  "nixpkgs";
@@ -631,7 +637,8 @@
                     #image = /home/nathan/Wallpapers/walls/green-tea.jpg;
                     #image = ./cherry_tree.jpg;
                     #image = ./skyscraper.jpg;
-                    image = ./village.jpg;
+                    #image = ./village.jpg;
+                    image = ./stones-water.jpg;
                     #image = pkgs.fetchurl {
                     #  url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
                     #  sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
