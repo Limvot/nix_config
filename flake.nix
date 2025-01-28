@@ -336,6 +336,7 @@
                     enable = true;
                     settings = {
                       window-decoration = false;
+                      minimum-contrast = 1.5;
                       #font-family = "Recursive Mono Linear Static";
                       #font-size = 11;
                       #theme = "GruvboxDarkHard";
