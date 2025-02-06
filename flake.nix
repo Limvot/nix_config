@@ -4,9 +4,9 @@
     inputs = {
         nixpkgs.url = "nixpkgs/nixos-unstable";
         stylix = {
-          #url = "github:danth/stylix";
+          url = "github:danth/stylix";
           #url = "github:trueNAHO/stylix/stylix-downgrade-and-lock-base16-vim-input";
-          url = "github:danth/stylix/2985ee9b2836a725b04628d24f934212b96eacbe";
+          #url = "github:danth/stylix/2985ee9b2836a725b04628d24f934212b96eacbe";
           inputs.nixpkgs.follows =  "nixpkgs";
         };
 
