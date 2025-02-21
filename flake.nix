@@ -3,6 +3,17 @@
 
     inputs = {
         nixpkgs.url = "nixpkgs/nixos-unstable";
+        stylix = {
+          url = "github:danth/stylix";
+          #url = "github:trueNAHO/stylix/stylix-downgrade-and-lock-base16-vim-input";
+          #url = "github:danth/stylix/2985ee9b2836a725b04628d24f934212b96eacbe";
+          inputs.nixpkgs.follows =  "nixpkgs";
+        };
+
+        niri = {
+            url = "github:sodiboo/niri-flake";
+            inputs.nixpkgs.follows =  "nixpkgs";
+        };
         home-manager = {
             url = "github:nix-community/home-manager";
             inputs.nixpkgs.follows =  "nixpkgs";
@@ -10,9 +21,30 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     };
 
-    outputs = { self, nixpkgs, home-manager, nixos-hardware }@attrs:
+    outputs = { self, nixpkgs, stylix, niri, home-manager, nixos-hardware }@attrs:
         let
           system = "x86_64-linux";
+          make_besley = pkgs:(lib: (pkgs.stdenvNoCC.mkDerivation rec {
+                      pname = "besley";
+                      version = "4.0";
+                      src = pkgs.fetchFromGitHub {
+                          owner = "indestructible-type";
+                          repo = "Besley";
+                          rev = "99d5b97fcb863c4a667571ac8f86f745c345d3ab";
+                          sha256 = "sha256-N6QU3Pd6EnIrdbRtDT3mW5ny683DBWo0odADJBSdA2E=";
+                      };
+                      installPhase = ''
+                        install -D -t $out/share/fonts/opentype/ $(find $src -type f -name '*.otf')
+                        install -D -t $out/share/fonts/truetype/ $(find $src -type f -name '*.ttf')
+                      '';
+                      meta = with lib; {
+                        homepage = "https://indestructibletype.com/Besley.html";
+                        description = "by indestructable-type";
+                        license = licenses.ofl;
+                        maintainers = [ ];
+                        platforms = platforms.all;
+                      };
+                    }));
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
               home-manager.users.nathan = { config, pkgs, lib, ... }:{ 
@@ -27,7 +59,10 @@
                   home.stateVersion = "22.11";
                   
                   fonts.fontconfig.enable = true;
-                  home.packages = with pkgs; [ fira-code jetbrains-mono iosevka monoid recursive ];
+                  home.packages = with pkgs; [
+                    fira-code jetbrains-mono iosevka monoid recursive inter (make_besley pkgs lib)
+                    xwayland-satellite swww
+                  ]; 
 
                   systemd.user.services.mpris-proxy = {
                     Unit.Description = "Mpris proxy";
@@ -36,12 +71,274 @@
                     Install.WantedBy = [ "default.target" ];
                   };
 
+                  programs.fuzzel.enable = true;
+
+                  programs.waybar = {
+                    # This is to fix backlight if it freaking worked
+                    # remove when upgraded from 0.11
+                    # PR this is based on is https://github.com/Alexays/Waybar/pull/3808
+                    package = pkgs.waybar.overrideAttrs (old: {
+                      postUnpack = (builtins.elemAt old.postUnpack 0) + ''
+                        pushd "$sourceRoot"
+                        sed -i 's#/org/freedesktop/login1/session/self#/org/freedesktop/login1/session/auto#' ./src/util/backlight_backend.cpp 
+                        popd
+                      '';
+                    });
+
+                    enable = true;
+                    settings = {
+                      mainBar = {
+                        layer = "top";
+                        position = "top";
+                        height = 18;
+                        modules-left = [ "memory" "disk" "network" ];
+                        modules-center = [ "clock" ];
+                        modules-right = [ "battery" "power-profiles-daemon" "backlight" "pulseaudio" ];
+                        reload_style_on_change = true;
+                      };
+                    };
+                    style = ''
+                      /*
+                      * {
+                        border: none;
+                        border-radius: 0;
+                        font-family: Recursive;
+                      }
+                      */
+                      window#waybar {
+                        background: transparent;
+                        color: #ffffff;
+                      }
+                      button {
+                        box-shadow: none;
+                        border: none;
+                        border-radius: 0;
+                        transition-property: none;
+                      }
+                      #workspaces button {
+                        padding: 0 5px;
+                        background-color: transparent;
+                        color: #ffffff;
+                      }
+                      #mode {
+                        background-color: #64829D;
+                        border-bottom: 3px solid #ffffff;
+                      }
+                      #memory, #disk, #network, #pulseaudio, #battery, #power-profiles-daemon, #backlight, #clock {
+                        padding: 0 10px;
+                        color: #f0f0ff;
+                        background-color: rgba(30,30,46,0.6);
+                        border-radius: 99px;
+                        margin-left: 4px;
+                      }
+                      #window, #workspaces {
+                        margin: 0 4px;
+                      }
+                      #clock {
+                        font-weight: bold;
+                      }
+                      #battery {
+                        margin-left: 4px;
+                      }
+                      /*
+                      #pulseaudio {
+                        color: #000000;
+                        background-color: #f1c40f;
+                      }
+                      */
+                    '';
+                  };
+
+                  programs.niri.settings = {
+                    prefer-no-csd = true;
+                    input.keyboard.xkb = {
+                      options = "ctrl:nocaps";
+                    };
+                    environment = {
+                      DISPLAY = ":0"; # xwayland-satellite
+                    };
+                    spawn-at-startup = [
+                      { command = [ "swww-daemon" ]; }
+                      { command = [ "swww" "img" "${config.stylix.image}" ]; }
+                      { command = [ "waybar" ]; }
+                      { command = [ "xwayland-satellite" ]; }
+                    ];
+                    window-rules = [
+                      {
+                        draw-border-with-background = false;
+                        geometry-corner-radius = let r = 4.0; in {
+                          top-left = r;
+                          top-right = r;
+                          bottom-left = r;
+                          bottom-right = r;
+                        };
+                        clip-to-geometry = true;
+                      }
+                      {
+                        matches = [{is-focused = false;}];
+                        opacity = 0.95;
+                      }
+                    ];
+                    layout = {
+                      #gaps = 8;
+                      gaps = 16;
+                      center-focused-column = "never";
+                      preset-column-widths = [
+                        { proportion = 1.0 / 3.0; }
+                        { proportion = 1.0 / 2.0; }
+                        { proportion = 2.0 / 3.0; }
+                      ];
+                      #If you leave the brackets empty, the windows themselves will decide their initial width.
+                      #preset-window-heights = {};
+                      default-column-width = { proportion = 1.0 / 2.0; };
+                      #focus-ring = {
+                      #  enable = false;
+                      #  width = 8;
+                      #  # Color of the ring on the active monitor.
+                      #  active.color = "#7fc8ff";
+                      #  # Color of the ring on inactive monitors.
+                      #  inactive.color = "#505050";
+                      #};
+                      #border = {
+                      #  enable = true;
+                      #  width = 4;
+                      #  active = {
+                      #    gradient = {
+                      #      angle = 130;
+                      #      relative-to = "workspace-view";
+                      #      from = "#90F090";
+                      #      to   = "#909090";
+                      #    };
+                      #  };
+                      #  inactive = {
+                      #    gradient = {
+                      #      angle = 130;
+                      #      relative-to = "workspace-view";
+                      #      from = "#409040";
+                      #      to   = "#404040";
+                      #    };
+                      #  };
+                      #};
+                      #struts = {
+                        #left   = 64;
+                        #right  = 64;
+                        #top    = 64;
+                        #bottom = 64;
+                      #};
+                    };
+                    binds = with config.lib.niri.actions; {
+                      #"Alt+P".action = spawn "bemenu-run";
+                      "Alt+P".action = spawn "fuzzel";
+                      "Alt+Return".action = spawn "ghostty";
+                      "Alt+Shift+Return".action = spawn "foot";
+                      "Alt+Shift+Slash".action = show-hotkey-overlay;
+
+                      "Alt+Shift+C".action = close-window;
+
+                      "Alt+Left"  .action = focus-column-left;
+                      "Alt+Down"  .action = focus-window-down;
+                      "Alt+Up"    .action = focus-window-up;
+                      "Alt+Right" .action = focus-column-right;
+                      "Alt+H"     .action = focus-column-left;
+                      #"Alt+J"     .action = focus-window-down;
+                      #"Alt+K"     .action = focus-window-up;
+                      "Alt+L"     .action = focus-column-right;
+
+                      "Alt+Shift+Left"  .action = move-column-left;
+                      "Alt+Shift+Down"  .action = move-window-down;
+                      "Alt+Shift+Up"    .action = move-window-up;
+                      "Alt+Shift+Right" .action = move-column-right;
+                      "Alt+Shift+H"     .action = move-column-left;
+                      #"Alt+Shift+J"     .action = move-window-down;
+                      #"Alt+Shift+K"     .action = move-window-up;
+                      "Alt+Shift+L"     .action = move-column-right;
+
+                      # Nice alts
+                      "Alt+J"      .action = focus-window-or-workspace-down;
+                      "Alt+K"      .action = focus-window-or-workspace-up;
+                      "Alt+Shift+J".action = move-window-down-or-to-workspace-down;
+                      "Alt+Shift+K".action = move-window-up-or-to-workspace-up;
+
+
+                      "Alt+Ctrl+Left" .action = focus-monitor-left;
+                      "Alt+Ctrl+Down" .action = focus-monitor-down;
+                      "Alt+Ctrl+Up"   .action = focus-monitor-up;
+                      "Alt+Ctrl+Right".action = focus-monitor-right;
+                      "Alt+Ctrl+H"    .action = focus-monitor-left;
+                      "Alt+Ctrl+J"    .action = focus-monitor-down;
+                      "Alt+Ctrl+K"    .action = focus-monitor-up;
+                      "Alt+Ctrl+L"    .action = focus-monitor-right;
+
+                      "Alt+Shift+Ctrl+Left"  .action = move-column-to-monitor-left;
+                      "Alt+Shift+Ctrl+Down"  .action = move-column-to-monitor-down;
+                      "Alt+Shift+Ctrl+Up"    .action = move-column-to-monitor-up;
+                      "Alt+Shift+Ctrl+Right" .action = move-column-to-monitor-right;
+                      "Alt+Shift+Ctrl+H"     .action = move-column-to-monitor-left;
+                      "Alt+Shift+Ctrl+J"     .action = move-column-to-monitor-down;
+                      "Alt+Shift+Ctrl+K"     .action = move-column-to-monitor-up;
+                      "Alt+Shift+Ctrl+L"     .action = move-column-to-monitor-right;
+
+
+                      #...
+                      "Alt+1".action = focus-workspace 1;
+                      "Alt+2".action = focus-workspace 2;
+                      "Alt+3".action = focus-workspace 3;
+                      "Alt+4".action = focus-workspace 4;
+                      "Alt+5".action = focus-workspace 5;
+                      "Alt+6".action = focus-workspace 6;
+                      "Alt+7".action = focus-workspace 7;
+                      "Alt+8".action = focus-workspace 8;
+                      "Alt+9".action = focus-workspace 9;
+                      "Alt+Shift+1".action = move-column-to-workspace 1;
+                      "Alt+Shift+2".action = move-column-to-workspace 2;
+                      "Alt+Shift+3".action = move-column-to-workspace 3;
+                      "Alt+Shift+4".action = move-column-to-workspace 4;
+                      "Alt+Shift+5".action = move-column-to-workspace 5;
+                      "Alt+Shift+6".action = move-column-to-workspace 6;
+                      "Alt+Shift+7".action = move-column-to-workspace 7;
+                      "Alt+Shift+8".action = move-column-to-workspace 8;
+                      "Alt+Shift+9".action = move-column-to-workspace 9;
+
+                      #Consume one window from the right into the focused column.
+                      "Alt+Comma"  .action = consume-window-into-column;
+                      #Expel one window from the focused column to the right.
+                      "Alt+Period" .action = expel-window-from-column;
+
+                      #There are also commands that consume or expel a single window to the side.
+                      "Alt+BracketLeft"  .action = consume-or-expel-window-left;
+                      "Alt+BracketRight" .action = consume-or-expel-window-right;
+
+                      "Alt+R".action = switch-preset-column-width;
+                      "Alt+Shift+R".action = switch-preset-window-height;
+                      "Alt+Ctrl+R".action = reset-window-height;
+                      "Alt+F".action = maximize-column;
+                      "Alt+Shift+F".action = fullscreen-window;
+                      "Alt+C".action = center-column;
+
+                      "Alt+Minus".action = set-column-width "-10%";
+                      "Alt+Equal".action = set-column-width "+10%";
+
+                      "Alt+Shift+Minus".action = set-window-height "-10%";
+                      "Alt+Shift+Equal".action = set-window-height "+10%";
+
+                      #"Print".action = screenshot;
+                      #"Ctrl+Print".aciton = screenshot-screen;
+                      #"Alt+Print".action = screenshot-window;
+
+                      "Alt+Shift+E".action = quit;
+                      "Ctrl+Alt+Delete".action = quit;
+
+                      "Alt+Shift+P".action = power-off-monitors;
+                    };
+                  };
+
                   programs.ghostty = {
                     enable = true;
                     settings = {
                       window-decoration = false;
-                      font-family = "Recursive Mono Linear Static";
-                      font-size = 16;
+                      minimum-contrast = 1.5;
+                      #font-family = "Recursive Mono Linear Static";
+                      #font-size = 11;
                       #theme = "GruvboxDarkHard";
                       #theme = "Horizon";
                       #theme = "IC_Green_PPL";
@@ -61,7 +358,9 @@
                       #theme = "MonaLisa";
                       #theme = "Monokai Remastered";
                       #theme = "Monokai Soda";
-                      theme = "NightLion v2";
+
+                      #theme = "NightLion v2";
+
                       #theme = "niji";
                       #theme = "Nocturnal Winter";
                       #theme = "nord";
@@ -114,7 +413,7 @@
                         #font = "JetBrainsMono:size=8";
                         #font = "Iosevka:size=18";
                         #font = "Monoid:size=6";
-                        font = "Recursive:size=16"; # seems to be Recursive Mono Linear Static in Ghostty
+                        #font = "Recursive:size=16"; # seems to be Recursive Mono Linear Static in Ghostty
                         #dpi-aware = "yes";
                       };
                       mouse = {
@@ -334,6 +633,31 @@
                   services.printing.enable = true;
                   services.printing.drivers = [ pkgs.brlaser ];
 
+                  stylix = {
+                    enable = true;
+                    #image = /home/nathan/Wallpapers/walls/green-tea.jpg;
+                    #image = ./cherry_tree.jpg;
+                    #image = ./skyscraper.jpg;
+                    #image = ./village.jpg;
+                    image = ./stones-water.jpg;
+                    #image = pkgs.fetchurl {
+                    #  url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
+                    #  sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
+                    #};
+                    polarity = "dark";
+                    fonts = {
+                      # hehe casual as serif
+                      serif     = { package = (make_besley pkgs lib); name = "Besley"; };
+                      #sansSerif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
+                      sansSerif = { package = pkgs.inter; name = "Inter"; };
+                      monospace = { package = pkgs.recursive; name = "Recursive Mono Linear Static"; };
+                      emoji     = { package = pkgs.noto-fonts-emoji; name = "Noto Color Emoji"; };
+                    };
+                  };
+                  programs.niri = {
+                    enable = true;
+                    package = pkgs.niri;
+                  };
                   programs.sway = {
                     enable = true;
                     wrapperFeatures.gtk = true;
@@ -402,7 +726,6 @@
                           '';
                     })
                   ] ++ specificPkgs;
-                  programs.waybar.enable = true;
 
                   # kanshi systemd service
                   systemd.user.services.kanshi = {
@@ -429,6 +752,8 @@
             specialArgs = attrs;
             modules = [
                 nixos-hardware.nixosModules.framework-13-7040-amd
+                stylix.nixosModules.stylix
+                niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.vulkan-tools pkgs.discord]) {
@@ -473,7 +798,7 @@
                   networking.hostName = "nixos-framework"; # Define your hostname.
                   system.stateVersion = "22.11"; # Did you read the comment?
                   programs.fuse.userAllowOther = true;
-                  services.jellyfin.enable = true;
+                  #services.jellyfin.enable = true;
                   services.fwupd.enable = true;
                   #services.xserver = {
                   #  enable = true;
@@ -487,6 +812,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince ]) {
@@ -551,6 +877,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs []) {
@@ -577,7 +904,7 @@
                   networking.hostName = "nixos-desktop"; # Define your hostname.
                   system.stateVersion = "22.11";
 
-                  services.jellyfin.enable = true;
+                  #services.jellyfin.enable = true;
                 }))
             ];
         };
@@ -585,6 +912,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
                 ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs []) {
@@ -938,17 +1266,17 @@
                           proxyWebsockets = true;
                         };
                       };
-                      virtualHosts."drop.room409.xyz" = {
-                        forceSSL = true;
-                        enableACME = true;
-                        locations."/" = {
-                          proxyPass = "http://localhost:9009";
-                          proxyWebsockets = true;
-                          extraConfig = ''
-                              client_max_body_size 500M;
-                          '';
-                        };
-                      };
+                      #virtualHosts."drop.room409.xyz" = {
+                        #forceSSL = true;
+                        #enableACME = true;
+                        #locations."/" = {
+                          #proxyPass = "http://localhost:9009";
+                          #proxyWebsockets = true;
+                          #extraConfig = ''
+                              #client_max_body_size 500M;
+                          #'';
+                        #};
+                      #};
                       #virtualHosts."www.kraken-lang.org" = {
                       #  forceSSL = true;
                       #  enableACME = true;
@@ -1117,11 +1445,10 @@
                       #  enableACME = true;
                       #  locations."/".proxyPass = "http://10.100.0.7:80";
                       #};
-                      virtualHosts."neel.room409.xyz" = {
+                      virtualHosts."batou-jf.room409.xyz" = {
                         forceSSL = true;
                         enableACME = true;
-                        basicAuth = { neel = "el_psy_congroo"; };
-                        locations."/".proxyPass = "http://100.64.0.1:8080";
+                        locations."/".proxyPass = "http://100.64.0.1:8096";
                       };
                   };
 
