@@ -532,6 +532,18 @@
                       home = "/home/marcus";
                       shell = "/run/current-system/sw/bin/bash";
                   };
+                  users.extraUsers.pratik = {
+                    name = "pratik";
+                    isNormalUser = true;
+                    group = "users";
+                    extraGroups = [ "wheel" "disk" "audio" "video" "networkmanager" "systemd-journal" "networkmanager" "plugdev"];
+                    createHome = true;
+                    home = "/home/pratik";
+                    shell = "/run/current-system/sw/bin/bash";
+                    openssh.authorizedKeys.keys = [
+                      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKmLFCW0HGGJzTO42/ZuWFmDY80ZpV8e8qEc3CEBclF8 pratik@elmerus.fedora"
+                    ];
+                  };
                 }))
             ];
         };
