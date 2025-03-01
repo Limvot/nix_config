@@ -77,13 +77,13 @@
                     # This is to fix backlight if it freaking worked
                     # remove when upgraded from 0.11
                     # PR this is based on is https://github.com/Alexays/Waybar/pull/3808
-                    package = pkgs.waybar.overrideAttrs (old: {
-                      postUnpack = (builtins.elemAt old.postUnpack 0) + ''
-                        pushd "$sourceRoot"
-                        sed -i 's#/org/freedesktop/login1/session/self#/org/freedesktop/login1/session/auto#' ./src/util/backlight_backend.cpp 
-                        popd
-                      '';
-                    });
+                    #package = pkgs.waybar.overrideAttrs (old: {
+                    #  postUnpack = (builtins.elemAt old.postUnpack 0) + ''
+                    #    pushd "$sourceRoot"
+                    #    sed -i 's#/org/freedesktop/login1/session/self#/org/freedesktop/login1/session/auto#' ./src/util/backlight_backend.cpp 
+                    #    popd
+                    #  '';
+                    #});
 
                     enable = true;
                     settings = {
@@ -756,7 +756,7 @@
                 niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.vulkan-tools pkgs.discord]) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.light pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.vulkan-tools]) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
                   
