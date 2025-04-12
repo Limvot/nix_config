@@ -5,8 +5,6 @@
         nixpkgs.url = "nixpkgs/nixos-unstable";
         stylix = {
           url = "github:danth/stylix";
-          #url = "github:trueNAHO/stylix/stylix-downgrade-and-lock-base16-vim-input";
-          #url = "github:danth/stylix/2985ee9b2836a725b04628d24f934212b96eacbe";
           inputs.nixpkgs.follows =  "nixpkgs";
         };
 
@@ -74,17 +72,6 @@
                   programs.fuzzel.enable = true;
 
                   programs.waybar = {
-                    # This is to fix backlight if it freaking worked
-                    # remove when upgraded from 0.11
-                    # PR this is based on is https://github.com/Alexays/Waybar/pull/3808
-                    #package = pkgs.waybar.overrideAttrs (old: {
-                    #  postUnpack = (builtins.elemAt old.postUnpack 0) + ''
-                    #    pushd "$sourceRoot"
-                    #    sed -i 's#/org/freedesktop/login1/session/self#/org/freedesktop/login1/session/auto#' ./src/util/backlight_backend.cpp 
-                    #    popd
-                    #  '';
-                    #});
-
                     enable = true;
                     settings = {
                       mainBar = {
@@ -639,7 +626,8 @@
                     #image = ./cherry_tree.jpg;
                     #image = ./skyscraper.jpg;
                     #image = ./village.jpg;
-                    image = ./stones-water.jpg;
+                    #image = ./stones-water.jpg;
+                    image = ./moss.jpeg;
                     #image = pkgs.fetchurl {
                     #  url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
                     #  sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
