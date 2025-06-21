@@ -160,10 +160,11 @@
                           bottom-right = r;
                         };
                         clip-to-geometry = true;
+                        opacity = 0.95;
                       }
                       {
                         matches = [{is-focused = false;}];
-                        opacity = 0.95;
+                        opacity = 0.85;
                       }
                     ];
                     layout = {
@@ -627,15 +628,19 @@
                     #image = ./skyscraper.jpg;
                     #image = ./village.jpg;
                     #image = ./stones-water.jpg;
-                    image = ./moss.jpeg;
+                    #image = ./moss.jpeg;
+                    #image = ./ruinedmansion.jpg;
+                    image = ./130_1zhJtUA.jpeg; #the city street
                     #image = pkgs.fetchurl {
                     #  url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
                     #  sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
                     #};
                     polarity = "dark";
+                    #polarity = "light";
                     fonts = {
                       # hehe casual as serif
                       serif     = { package = (make_besley pkgs lib); name = "Besley"; };
+                      #serif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
                       #sansSerif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
                       sansSerif = { package = pkgs.inter; name = "Inter"; };
                       monospace = { package = pkgs.recursive; name = "Recursive Mono Linear Static"; };
@@ -675,7 +680,7 @@
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall
                     btop htop python3
-                    waypipe firefox-wayland chromium nautilus
+                    waypipe firefox-wayland chromium chawan nautilus
                     vlc mpv wayfarer libreoffice calibre foliate #transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
@@ -1006,8 +1011,8 @@
                   networking.firewall = {
                       #allowedTCPPorts = [ 22 80 443 3478 3479 ];
                       #allowedUDPPorts = [ 22 80 443 5349 5350 51820 ];
-                      allowedTCPPorts = [ 22 80 443 30000 ]; #30000 is minetest
-                      allowedUDPPorts = [ 22 80 443 51820 30000 ];
+                      allowedTCPPorts = [ 22 80 443 8789 30000 ]; #30000 is minetest
+                      allowedUDPPorts = [ 22 80 443 8789 51820 30000 ];
                       #extraCommands = ''
                       #    iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
                       #'';
@@ -1084,6 +1089,12 @@
                   #  port = 8888;
                   #};
 
+                  # for password resets run (with appropriate paths)
+                  # ./k8ngn95hsi9qrdkvr734slj9fx3j3lbb-matrix-synapse-1.128.0/bin/hash_password -c /nix/store/ql794v5ilmxa619ha83ya61pk12066dh-homeserver.yaml
+                  # and then use `psql -d matrix-synapse -U matrix-synapse -h localhost`
+                  # with the password 'synapse'
+                  # and do
+                  # UPDATE users SET password_hash='$2b$12$ED4NT7N6tI4Mbq/IKZES6.oilx0k2iK4DN3a6wPWIEpXSAsIOWe3e' WHERE name='<MATRIX_USERNAME>';
                   services.matrix-synapse = {
                       enable = true;
 
@@ -1112,7 +1123,7 @@
                             }
                         ];
                         app_service_config_files = [
-                            "/var/lib/matrix-synapse/telegram-registration.yaml"
+                            #"/var/lib/matrix-synapse/telegram-registration.yaml"
                             "/var/lib/matrix-synapse/facebook-registration.yaml"
                         ];
                       };
