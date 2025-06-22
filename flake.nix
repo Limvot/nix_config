@@ -160,11 +160,12 @@
                           bottom-right = r;
                         };
                         clip-to-geometry = true;
-                        opacity = 0.95;
+                        #opacity = 0.95;
                       }
                       {
                         matches = [{is-focused = false;}];
-                        opacity = 0.85;
+                        #opacity = 0.85;
+                        opacity = 0.95;
                       }
                     ];
                     layout = {
@@ -277,15 +278,15 @@
                       "Alt+7".action = focus-workspace 7;
                       "Alt+8".action = focus-workspace 8;
                       "Alt+9".action = focus-workspace 9;
-                      "Alt+Shift+1".action = move-column-to-workspace 1;
-                      "Alt+Shift+2".action = move-column-to-workspace 2;
-                      "Alt+Shift+3".action = move-column-to-workspace 3;
-                      "Alt+Shift+4".action = move-column-to-workspace 4;
-                      "Alt+Shift+5".action = move-column-to-workspace 5;
-                      "Alt+Shift+6".action = move-column-to-workspace 6;
-                      "Alt+Shift+7".action = move-column-to-workspace 7;
-                      "Alt+Shift+8".action = move-column-to-workspace 8;
-                      "Alt+Shift+9".action = move-column-to-workspace 9;
+                      #"Alt+Shift+1".action = move-column-to-workspace 1;
+                      #"Alt+Shift+2".action = move-column-to-workspace 2;
+                      #"Alt+Shift+3".action = move-column-to-workspace 3;
+                      #"Alt+Shift+4".action = move-column-to-workspace 4;
+                      #"Alt+Shift+5".action = move-column-to-workspace 5;
+                      #"Alt+Shift+6".action = move-column-to-workspace 6;
+                      #"Alt+Shift+7".action = move-column-to-workspace 7;
+                      #"Alt+Shift+8".action = move-column-to-workspace 8;
+                      #"Alt+Shift+9".action = move-column-to-workspace 9;
 
                       #Consume one window from the right into the focused column.
                       "Alt+Comma"  .action = consume-window-into-column;
