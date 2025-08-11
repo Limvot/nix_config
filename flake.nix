@@ -1171,6 +1171,7 @@
                     port = 8789;
                     settings.serverUrl = "https://headscale.room409.xyz";
                     settings.dns.base_domain = "wg.test";
+                    settings.dns.nameservers.global = ["8.8.8.8"];
                     settings.logtail.enabled = false;
                   };
 
