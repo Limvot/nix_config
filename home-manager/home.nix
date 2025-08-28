@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:{ 
+{ username, homeDirectory }: ({ config, pkgs, lib, ... }:{
                   # This value determines the Home Manager release that your
                   # configuration is compatible with. This helps avoid breakage
                   # when a new Home Manager release introduces backwards
@@ -8,11 +8,14 @@
                   # the Home Manager release notes for a list of state version
                   # changes in each release.
                   home.stateVersion = "22.11";
+                  home.username = username;
+                  home.homeDirectory = homeDirectory;
                   
                   fonts.fontconfig.enable = true;
                   home.packages = with pkgs; [
                     fira-code jetbrains-mono iosevka monoid recursive inter
                     xwayland-satellite swww
+                    niri
                   ]; 
 
                   systemd.user.services.mpris-proxy = {
@@ -99,7 +102,7 @@
                     };
                     spawn-at-startup = [
                       { command = [ "swww-daemon" ]; }
-                      { command = [ "swww" "img" "${config.stylix.image}" ]; }
+                      #{ command = [ "swww" "img" "${config.stylix.image}" ]; }
                       { command = [ "waybar" ]; }
                       { command = [ "xwayland-satellite" ]; }
                     ];
@@ -393,6 +396,7 @@
                     };
                     profileExtra = ''
                       if [ -e /home/nathan/.nix-profile/etc/profile.d/nix.sh ]; then . /home/nathan/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+                      export PATH="/run/system-manager/sw/bin/:/home/nbraswell6/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
                     '';
                     shellAliases = {
                       ng  ="nmcli c up NETGEAR97";
@@ -537,4 +541,4 @@
                       rainbow-delimiters dracula-theme
                     ];
                   };
-              }
+              })
