@@ -45,7 +45,7 @@
                     }));
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
-              home-manager.users.nathan = import ./home-manager/home.nix;
+              home-manager.users.nathan = ((import ./home-manager/home.nix) { username = "nathan"; homeDirectory = "/home/nathan"; });
           };
           commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: (specificPkgs: {
                   nixpkgs.config.allowUnfree = true;
