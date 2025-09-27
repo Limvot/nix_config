@@ -102,7 +102,7 @@
                     };
                     spawn-at-startup = [
                       { command = [ "swww-daemon" ]; }
-                      #{ command = [ "swww" "img" "${config.stylix.image}" ]; }
+                      { command = [ "swww" "img" "${config.stylix.image}" ]; }
                       { command = [ "waybar" ]; }
                       { command = [ "xwayland-satellite" ]; }
                     ];
@@ -116,12 +116,12 @@
                           bottom-right = r;
                         };
                         clip-to-geometry = true;
-                        #opacity = 0.95;
+                        opacity = 0.95;
                       }
                       {
                         matches = [{is-focused = false;}];
-                        #opacity = 0.85;
-                        opacity = 0.95;
+                        opacity = 0.85;
+                        #opacity = 0.95;
                       }
                     ];
                     layout = {
@@ -266,6 +266,7 @@
                       "Alt+Shift+Minus".action = set-window-height "-10%";
                       "Alt+Shift+Equal".action = set-window-height "+10%";
 
+                      "Alt+S".action.screenshot.show-pointer = false;
                       #"Print".action = screenshot;
                       #"Ctrl+Print".aciton = screenshot-screen;
                       #"Alt+Print".action = screenshot-window;

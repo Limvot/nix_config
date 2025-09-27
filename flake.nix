@@ -92,7 +92,9 @@
                     #image = ./stones-water.jpg;
                     #image = ./moss.jpeg;
                     #image = ./ruinedmansion.jpg;
-                    image = ./130_1zhJtUA.jpeg; #the city street
+                    #image = ./130_1zhJtUA.jpeg; #the city street
+                    #image = ./GitS_alley_to_water_zoom.png;
+                    image = ./GitS_other_alley_zoom.png;
                     #image = pkgs.fetchurl {
                     #  url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
                     #  sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
