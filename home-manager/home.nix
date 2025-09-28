@@ -116,7 +116,7 @@
                           bottom-right = r;
                         };
                         clip-to-geometry = true;
-                        opacity = 0.95;
+                        #opacity = 0.95;
                       }
                       {
                         matches = [{is-focused = false;}];
@@ -125,8 +125,8 @@
                       }
                     ];
                     layout = {
-                      #gaps = 8;
-                      gaps = 16;
+                      gaps = 8;
+                      #gaps = 16;
                       center-focused-column = "never";
                       preset-column-widths = [
                         { proportion = 1.0 / 3.0; }
