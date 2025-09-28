@@ -677,6 +677,9 @@
                           forceSSL = true;
                           enableACME = true;
                           locations."/".proxyPass = "http://localhost:3001";
+                          locations."/".extraConfig = ''
+                              client_max_body_size 100M;
+                          '';
                       };
 
                       virtualHosts."synapse.room409.xyz" = {
