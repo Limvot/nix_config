@@ -408,6 +408,7 @@
                   };
                   programs.git = {
                     enable = true;
+                    lfs.enable = true;
                     userName = "Nathan Braswell";
                     userEmail = "nathan@braswell.email";
                   };
