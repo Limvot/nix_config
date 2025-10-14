@@ -102,7 +102,7 @@
                     };
                     spawn-at-startup = [
                       { command = [ "swww-daemon" ]; }
-                      #{ command = [ "swww" "img" "${config.stylix.image}" ]; }
+                      { command = [ "swww" "img" "${config.stylix.image}" ]; }
                       { command = [ "waybar" ]; }
                       { command = [ "xwayland-satellite" ]; }
                     ];
@@ -120,13 +120,13 @@
                       }
                       {
                         matches = [{is-focused = false;}];
-                        #opacity = 0.85;
-                        opacity = 0.95;
+                        opacity = 0.85;
+                        #opacity = 0.95;
                       }
                     ];
                     layout = {
-                      #gaps = 8;
-                      gaps = 16;
+                      gaps = 8;
+                      #gaps = 16;
                       center-focused-column = "never";
                       preset-column-widths = [
                         { proportion = 1.0 / 3.0; }
@@ -266,6 +266,7 @@
                       "Alt+Shift+Minus".action = set-window-height "-10%";
                       "Alt+Shift+Equal".action = set-window-height "+10%";
 
+                      "Alt+S".action.screenshot.show-pointer = false;
                       #"Print".action = screenshot;
                       #"Ctrl+Print".aciton = screenshot-screen;
                       #"Alt+Print".action = screenshot-window;
@@ -408,6 +409,7 @@
                   };
                   programs.git = {
                     enable = true;
+                    lfs.enable = true;
                     userName = "Nathan Braswell";
                     userEmail = "nathan@braswell.email";
                   };
