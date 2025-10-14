@@ -396,6 +396,7 @@
                     };
                     profileExtra = ''
                       if [ -e /home/nathan/.nix-profile/etc/profile.d/nix.sh ]; then . /home/nathan/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+                      . "$HOME/.cargo/env"
                       export PATH="/run/system-manager/sw/bin/:/home/nbraswell6/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
                     '';
                     shellAliases = {
