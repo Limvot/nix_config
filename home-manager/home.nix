@@ -94,6 +94,12 @@
 
                   programs.niri.settings = {
                     prefer-no-csd = true;
+                    # TV at 1080 instead of 4k
+                    outputs."DP-4".mode = {
+                      width = 1920;
+                      height = 1080;
+                      refresh = 60.000;
+                    };
                     input.keyboard.xkb = {
                       options = "ctrl:nocaps";
                     };
@@ -109,7 +115,7 @@
                     window-rules = [
                       {
                         draw-border-with-background = false;
-                        geometry-corner-radius = let r = 4.0; in {
+                        geometry-corner-radius = let r = 2.0; in {
                           top-left = r;
                           top-right = r;
                           bottom-left = r;
@@ -125,7 +131,9 @@
                       }
                     ];
                     layout = {
-                      gaps = 8;
+                      gaps = 4;
+                      #gaps = 4;
+                      #gaps = 8;
                       #gaps = 16;
                       center-focused-column = "never";
                       preset-column-widths = [
@@ -144,6 +152,7 @@
                       #  # Color of the ring on inactive monitors.
                       #  inactive.color = "#505050";
                       #};
+                      border.width = 2;
                       #border = {
                       #  enable = true;
                       #  width = 4;
@@ -543,5 +552,20 @@
                       #parinfer-rust-mode
                       rainbow-delimiters dracula-theme
                     ];
+                  };
+                  programs.iamb = {
+                    enable = true;
+                    settings = {
+                      settings = {
+                        image_preview = {};
+                        username_display = "displayname";
+                        sort = {
+                          rooms = ["recent"];
+                        };
+                      };
+                      profiles.miloignis = {
+                        user_id = "@miloignis:synapse.room409.xyz";
+                      };
+                    };
                   };
               })
