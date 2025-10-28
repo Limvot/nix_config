@@ -1,4 +1,4 @@
-{ username, homeDirectory }: ({ config, pkgs, lib, ... }:{
+{ username, homeDirectory, backgroundImg, email }: ({ config, pkgs, lib, ... }:{
                   # This value determines the Home Manager release that your
                   # configuration is compatible with. This helps avoid breakage
                   # when a new Home Manager release introduces backwards
@@ -109,7 +109,7 @@
                     };
                     spawn-at-startup = [
                       { command = [ "swww-daemon" ]; }
-                      { command = [ "swww" "img" "${config.stylix.image}" ]; }
+                      { command = [ "swww" "img" "${backgroundImg}" ]; }
                       { command = [ "waybar" ]; }
                       { command = [ "xwayland-satellite" ]; }
                     ];
@@ -421,7 +421,14 @@
                     enable = true;
                     lfs.enable = true;
                     userName = "Nathan Braswell";
-                    userEmail = "nathan@braswell.email";
+                    userEmail = email;
+                  };
+                  programs.jujutsu = {
+                    enable = true;
+                    settings.user = {
+                      name = "Nathan Braswell";
+                      email = email;
+                    };
                   };
                   programs.vim = {
                     enable = true;
