@@ -43,9 +43,10 @@
                         platforms = platforms.all;
                       };
                     }));
+          background = ./GitS_other_alley_zoom.png;
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
-              home-manager.users.nathan = ((import ./home-manager/home.nix) { username = "nathan"; homeDirectory = "/home/nathan"; backgroundImg = config.stylix.image });
+              home-manager.users.nathan = ((import ./home-manager/home.nix) { username = "nathan"; homeDirectory = "/home/nathan"; backgroundImg = background; email = "miloignis@gmail.com"; });
           };
           commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: (specificPkgs: {
                   nixpkgs.config.allowUnfree = true;
@@ -97,7 +98,7 @@
                     #image = ./ruinedmansion.jpg;
                     #image = ./130_1zhJtUA.jpeg; #the city street
                     #image = ./GitS_alley_to_water_zoom.png;
-                    image = ./GitS_other_alley_zoom.png;
+                    image = background;
                     #image = pkgs.fetchurl {
                     #  url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
                     #  sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
