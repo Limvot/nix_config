@@ -14,7 +14,8 @@
                   fonts.fontconfig.enable = true;
                   home.packages = with pkgs; [
                     fira-code jetbrains-mono iosevka monoid recursive inter
-                    xwayland-satellite swww
+                    xwayland-satellite
+                    swww
                     niri
                   ]; 
 
@@ -509,6 +510,7 @@
                     '';
                   };
                   programs.emacs = {
+                    package = pkgs.emacs-pgtk;
                     enable = true;
                     extraConfig = ''
                       (menu-bar-mode   -1)
@@ -521,37 +523,40 @@
                       (setq show-paren-delay 0)
                       (show-paren-mode)
 
-                      ;(require 'smartparens-config)
-
-
                       (setq evil-want-C-u-scroll t)
+                      (setq evil-want-keybinding nil)
                       (evil-mode 1)
                       (evil-set-undo-system 'undo-redo)
                       (setq key-chord-two-keys-delay 0.5)
                       (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+                      (evil-collection-init)
                       (key-chord-mode 1)
-                      (custom-set-variables
-                      ;; custom-set-variables was added by Custom.
-                      ;; If you edit it by hand, you could mess it up, so be careful.
-                      ;; Your init file should contain only one such instance.
-                      ;; If there is more than one, they won't work right.
-                      '(custom-safe-themes
-                      '("3ff4a0ad1a2da59a72536e6030291cf663314c14c8a5a9eb475f3c28436d071d" default)))
-                      (custom-set-faces
-                      ;; custom-set-faces was added by Custom.
-                      ;; If you edit it by hand, you could mess it up, so be careful.
-                      ;; Your init file should contain only one such instance.
-                      ;; If there is more than one, they won't work right.
-                      )
-                      (load-theme 'dracula t)
+
+                      (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+                      (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+                      ;(load-theme 'dracula t)
                     '';
                     extraPackages = epkgs: with epkgs; [
                       evil key-chord magit proof-general
-                      #paredit
-                      #smartparens
-                      #parinfer-rust-mode
-                      rainbow-delimiters dracula-theme
+                      ement nov evil-collection
+                      rainbow-delimiters
+                      dracula-theme
                     ];
+                  };
+                  services.pantalaimon = {
+                    package = pkgs.pantalaimon.overridePythonAttrs { doCheck = false; };
+                    enable = true;
+                    settings = {
+                        Default = {
+                          LogLevel = "Debug";
+                          SSL = true;
+                        };
+                        local-matrix = {
+                          Homeserver = "https://synapse.room409.xyz";
+                          ListenAddress = "127.0.0.1";
+                          ListenPort = "8009";
+                        };
+                    };
                   };
                   programs.iamb = {
                     enable = true;

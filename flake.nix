@@ -49,6 +49,9 @@
           };
           commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: (specificPkgs: {
                   nixpkgs.config.allowUnfree = true;
+                  nixpkgs.config.permittedInsecurePackages = [
+                      "olm-3.2.16"
+                  ];
                   nix.settings.experimental-features = [ "nix-command" "flakes" ];
                   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
                   time.timeZone = "America/New_York";
@@ -121,7 +124,7 @@
                     extraPackages = with pkgs; [
                       swaylock # lockscreen
                       swayidle
-                      xwayland # for legacy apps
+                      #xwayland # for legacy apps
                       #waybar # status bar
                       mako # notification daemon
                       kanshi # autorandr
