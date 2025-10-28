@@ -144,8 +144,8 @@
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall
                     btop htop python3
-                    waypipe firefox-wayland chromium chawan nautilus
-                    vlc mpv wayfarer libreoffice calibre foliate #transmission-gtk mupdf
+                    waypipe firefox-wayland chromium chawan cmatrix nautilus
+                    vlc mpv wayfarer libreoffice calibre foliate epr #transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
                     sway wayland glib dracula-theme adwaita-icon-theme swaylock swayidle wl-clipboard
@@ -219,7 +219,7 @@
                   
                   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usb_storage" "sd_mod" ];
                   boot.initrd.kernelModules = [ "amdgpu" ];
-                  hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
+                  #hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
                   boot.kernelModules = [ "kvm-amd" ];
                   boot.extraModulePackages = [ ];
                   
@@ -262,6 +262,10 @@
                   #  displayManager.gdm.enable = true;
                   #  desktopManager.gnome.enable = true;
                   #};
+                  networking.firewall = {
+                      allowedTCPPorts = [ 8080 8081 ]; #30000 is minetest
+                      allowedUDPPorts = [ 8080 8081 ];
+                  };
                 }))
             ];
         };
