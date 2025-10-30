@@ -550,21 +550,21 @@
                       dracula-theme
                     ];
                   };
-                  services.pantalaimon = {
-                    package = pkgs.pantalaimon.overridePythonAttrs { doCheck = false; };
-                    enable = true;
-                    settings = {
-                        Default = {
-                          LogLevel = "Debug";
-                          SSL = true;
-                        };
-                        local-matrix = {
-                          Homeserver = "https://synapse.room409.xyz";
-                          ListenAddress = "127.0.0.1";
-                          ListenPort = "8009";
-                        };
-                    };
-                  };
+                  #services.pantalaimon = {
+                    #package = pkgs.pantalaimon.overridePythonAttrs { doCheck = false; };
+                    #enable = true;
+                    #settings = {
+                        #Default = {
+                          #LogLevel = "Debug";
+                          #SSL = true;
+                        #};
+                        #local-matrix = {
+                          #Homeserver = "https://synapse.room409.xyz";
+                          #ListenAddress = "127.0.0.1";
+                          #ListenPort = "8009";
+                        #};
+                    #};
+                  #};
                   programs.iamb = {
                     enable = true;
                     settings = {
