@@ -43,7 +43,8 @@
                         platforms = platforms.all;
                       };
                     }));
-          background = ./GitS_other_alley_zoom.png;
+          #background = ./GitS_other_alley_zoom.png;
+          background = ./GitS_alley_to_water_zoom.png;
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
               home-manager.users.nathan = ((import ./home-manager/home.nix) { username = "nathan"; homeDirectory = "/home/nathan"; backgroundImg = background; email = "miloignis@gmail.com"; });
@@ -106,12 +107,11 @@
                     polarity = "dark";
                     #polarity = "light";
                     fonts = {
-                      # hehe casual as serif
                       serif     = { package = (make_besley pkgs lib); name = "Besley"; };
-                      #serif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
                       #sansSerif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
                       sansSerif = { package = pkgs.inter; name = "Inter"; };
                       monospace = { package = pkgs.recursive; name = "Recursive Mono Linear Static"; };
+                      #monospace = { package = pkgs.maple-mono.truetype; name = "Maple Mono"; };
                       emoji     = { package = pkgs.noto-fonts-emoji; name = "Noto Color Emoji"; };
                     };
                   };
@@ -140,8 +140,7 @@
                     };
                   };
                   # For steam, and Vulkan in general
-                  #hardware.opengl.driSupport = true;
-                  hardware.opengl.driSupport32Bit = true;
+                  hardware.graphics.enable32Bit = true;
                   hardware.steam-hardware.enable = true;
                   programs.steam.enable = true;
 
