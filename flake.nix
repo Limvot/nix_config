@@ -907,6 +907,125 @@
                           '';
                         };
                       };
+                      virtualHosts."survey-test1.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          root = pkgs.writeTextDir "index.html" ''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guest Survey</title>
+</head>
+<body>
+<iframe src="https://gatech.co1.qualtrics.com/jfe/form/SV_9txRmN3ky239cdo" height="800px" width="600px"></iframe>
+</body>
+</html>
+'';
+                        };
+                      };
+
+                      virtualHosts."survey-test2.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          root = pkgs.writeTextDir "index.html" ''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guest Survey</title>
+</head>
+<body>
+<style>
+  .survey-wrapper { width:100%; max-width:1000px; margin:0 auto; }
+  .survey-iframe { width:100%; height:80vh; border:0; min-height:600px; }
+</style>
+
+<div class="survey-wrapper" role="region" aria-label="Survey">
+  <div id="survey-container"></div>
+</div>
+
+<script>
+  // 1) Read host-page query params
+  const params = new URLSearchParams(location.search);
+
+  // 2) Get utm_campaign (example: RF777101202)
+  const utmCampaign = params.get('utm_campaign');
+
+  // 3) Decide which Embedded Data field name Qualtrics should receive
+  //    (use 'Referral' if that's your embedded-data field in Qualtrics)
+  if (utmCampaign) {
+    params.set('Referral', utmCampaign);
+  }
+
+  // 4) Optionally keep the original UTM values as well
+  //    (uncomment if you want them passed through)
+  // params.set('utm_source', params.get('utm_source') || 'unknown');
+  // params.set('utm_medium', params.get('utm_medium') || 'unknown');
+  // params.set('utm_campaign', utmCampaign || "");
+
+  // 5) Build and insert the iframe with the serialized params
+  const iframe = document.createElement('iframe');
+  iframe.className = 'survey-iframe';
+  iframe.title = 'Guest survey';
+  iframe.allowFullscreen = true;
+
+  // Replace the base URL below with your Qualtrics anonymous survey URL
+  const baseSurveyUrl = 'https://gatech.co1.qualtrics.com/jfe/form/SV_9txRmN3ky239cdo';
+  iframe.src = baseSurveyUrl + '?' + params.toString();
+
+  document.getElementById('survey-container').appendChild(iframe);
+</script>
+
+</body>
+</html>
+'';
+                        };
+                      };
+                      virtualHosts."survey-test3.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          root = pkgs.writeTextDir "index.html" ''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guest Survey</title>
+  <style>
+    .survey-wrapper { width:100%; max-width:1000px; margin:0 auto; padding:1rem; }
+    .survey-iframe { width:100%; height:80vh; border:0; min-height:600px; }
+  </style>
+</head>
+<body>
+  <main class="survey-wrapper" role="region" aria-label="Survey">
+    <div id="survey-container"></div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const utmCampaign = params.get('utm_campaign');
+    if (utmCampaign) {
+      params.set('Referral', utmCampaign);
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.className = 'survey-iframe';
+    iframe.title = 'Guest survey';
+    iframe.allowFullscreen = true;
+
+    const baseSurveyUrl = 'https://gatech.co1.qualtrics.com/jfe/form/SV_9txRmN3ky239cdo';
+    iframe.src = baseSurveyUrl + (params.toString() ? '?' + params.toString() : "");
+
+    document.getElementById('survey-container').appendChild(iframe);
+  </script>
+</body>
+</html>
+'';
+                        };
+                      };
 
                       virtualHosts."batou.room409.xyz" = {
                         forceSSL = true;
