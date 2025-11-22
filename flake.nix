@@ -112,7 +112,7 @@
                       sansSerif = { package = pkgs.inter; name = "Inter"; };
                       monospace = { package = pkgs.recursive; name = "Recursive Mono Linear Static"; };
                       #monospace = { package = pkgs.maple-mono.truetype; name = "Maple Mono"; };
-                      emoji     = { package = pkgs.noto-fonts-emoji; name = "Noto Color Emoji"; };
+                      emoji     = { package = pkgs.noto-fonts-color-emoji; name = "Noto Color Emoji"; };
                     };
                   };
                   programs.niri = {
@@ -147,7 +147,7 @@
                   environment.systemPackages = with pkgs; [
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall
                     btop htop python3
-                    waypipe firefox-wayland chromium chawan cmatrix nautilus
+                    waypipe firefox chromium chawan cmatrix nautilus
                     vlc mpv wayfarer libreoffice calibre foliate epr #transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
