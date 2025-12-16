@@ -108,8 +108,10 @@
                       DISPLAY = ":0"; # xwayland-satellite
                     };
                     spawn-at-startup = [
-                      { command = [ "swww-daemon" ]; }
-                      { command = [ "swww" "img" "${backgroundImg}" ]; }
+                      { command = [ "awww-daemon" ]; }
+                      { command = [ "awww" "img" "${backgroundImg}" ]; }
+                      #{ command = [ "swww-daemon" ]; }
+                      #{ command = [ "swww" "img" "${backgroundImg}" ]; }
                       { command = [ "waybar" ]; }
                       { command = [ "xwayland-satellite" ]; }
                     ];

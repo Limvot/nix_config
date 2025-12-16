@@ -7,6 +7,10 @@
           url = "github:danth/stylix";
           inputs.nixpkgs.follows =  "nixpkgs";
         };
+        awww = {
+          url = "git+https://codeberg.org/LGFae/awww";
+          inputs.nixpkgs.follows =  "nixpkgs";
+        };
 
         niri = {
             url = "github:sodiboo/niri-flake";
@@ -19,7 +23,7 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     };
 
-    outputs = { self, nixpkgs, stylix, niri, home-manager, nixos-hardware }@attrs:
+    outputs = { self, nixpkgs, stylix, awww, niri, home-manager, nixos-hardware }@attrs:
         let
           system = "x86_64-linux";
           make_besley = pkgs:(lib: (pkgs.stdenvNoCC.mkDerivation rec {
@@ -145,6 +149,7 @@
                   programs.steam.enable = true;
 
                   environment.systemPackages = with pkgs; [
+                    awww.packages.${pkgs.stdenv.hostPlatform.system}.awww
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall
                     btop htop python3
                     waypipe firefox chromium chawan cmatrix nautilus
