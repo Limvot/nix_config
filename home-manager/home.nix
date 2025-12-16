@@ -1,4 +1,4 @@
-{ username, homeDirectory }: ({ config, pkgs, lib, ... }:{
+{ username, homeDirectory, backgroundImg, email }: ({ config, pkgs, lib, ... }:{
                   # This value determines the Home Manager release that your
                   # configuration is compatible with. This helps avoid breakage
                   # when a new Home Manager release introduces backwards
@@ -14,7 +14,8 @@
                   fonts.fontconfig.enable = true;
                   home.packages = with pkgs; [
                     fira-code jetbrains-mono iosevka monoid recursive inter
-                    xwayland-satellite swww
+                    xwayland-satellite
+                    swww
                     niri
                   ]; 
 
@@ -94,6 +95,12 @@
 
                   programs.niri.settings = {
                     prefer-no-csd = true;
+                    # TV at 1080 instead of 4k
+                    outputs."DP-4".mode = {
+                      width = 1920;
+                      height = 1080;
+                      refresh = 60.000;
+                    };
                     input.keyboard.xkb = {
                       options = "ctrl:nocaps";
                     };
@@ -101,15 +108,17 @@
                       DISPLAY = ":0"; # xwayland-satellite
                     };
                     spawn-at-startup = [
-                      { command = [ "swww-daemon" ]; }
-                      { command = [ "swww" "img" "${config.stylix.image}" ]; }
+                      { command = [ "awww-daemon" ]; }
+                      { command = [ "awww" "img" "${backgroundImg}" ]; }
+                      #{ command = [ "swww-daemon" ]; }
+                      #{ command = [ "swww" "img" "${backgroundImg}" ]; }
                       { command = [ "waybar" ]; }
                       { command = [ "xwayland-satellite" ]; }
                     ];
                     window-rules = [
                       {
                         draw-border-with-background = false;
-                        geometry-corner-radius = let r = 4.0; in {
+                        geometry-corner-radius = let r = 2.0; in {
                           top-left = r;
                           top-right = r;
                           bottom-left = r;
@@ -125,7 +134,9 @@
                       }
                     ];
                     layout = {
-                      gaps = 8;
+                      gaps = 4;
+                      #gaps = 4;
+                      #gaps = 8;
                       #gaps = 16;
                       center-focused-column = "never";
                       preset-column-widths = [
@@ -144,6 +155,7 @@
                       #  # Color of the ring on inactive monitors.
                       #  inactive.color = "#505050";
                       #};
+                      border.width = 2;
                       #border = {
                       #  enable = true;
                       #  width = 4;
@@ -397,6 +409,7 @@
                     };
                     profileExtra = ''
                       if [ -e /home/nathan/.nix-profile/etc/profile.d/nix.sh ]; then . /home/nathan/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+                      . "$HOME/.cargo/env"
                       export PATH="/run/system-manager/sw/bin/:/home/nbraswell6/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH"
                     '';
                     shellAliases = {
@@ -408,8 +421,16 @@
                   };
                   programs.git = {
                     enable = true;
+                    lfs.enable = true;
                     userName = "Nathan Braswell";
-                    userEmail = "nathan@braswell.email";
+                    userEmail = email;
+                  };
+                  programs.jujutsu = {
+                    enable = true;
+                    settings.user = {
+                      name = "Nathan Braswell";
+                      email = email;
+                    };
                   };
                   programs.vim = {
                     enable = true;
@@ -498,6 +519,7 @@
                     '';
                   };
                   programs.emacs = {
+                    package = pkgs.emacs-pgtk;
                     enable = true;
                     extraConfig = ''
                       (menu-bar-mode   -1)
@@ -510,36 +532,54 @@
                       (setq show-paren-delay 0)
                       (show-paren-mode)
 
-                      ;(require 'smartparens-config)
-
-
                       (setq evil-want-C-u-scroll t)
+                      (setq evil-want-keybinding nil)
                       (evil-mode 1)
                       (evil-set-undo-system 'undo-redo)
                       (setq key-chord-two-keys-delay 0.5)
                       (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+                      (evil-collection-init)
                       (key-chord-mode 1)
-                      (custom-set-variables
-                      ;; custom-set-variables was added by Custom.
-                      ;; If you edit it by hand, you could mess it up, so be careful.
-                      ;; Your init file should contain only one such instance.
-                      ;; If there is more than one, they won't work right.
-                      '(custom-safe-themes
-                      '("3ff4a0ad1a2da59a72536e6030291cf663314c14c8a5a9eb475f3c28436d071d" default)))
-                      (custom-set-faces
-                      ;; custom-set-faces was added by Custom.
-                      ;; If you edit it by hand, you could mess it up, so be careful.
-                      ;; Your init file should contain only one such instance.
-                      ;; If there is more than one, they won't work right.
-                      )
-                      (load-theme 'dracula t)
+
+                      (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+                      (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+                      ;(load-theme 'dracula t)
                     '';
                     extraPackages = epkgs: with epkgs; [
                       evil key-chord magit proof-general
-                      #paredit
-                      #smartparens
-                      #parinfer-rust-mode
-                      rainbow-delimiters dracula-theme
+                      ement nov evil-collection
+                      rainbow-delimiters
+                      dracula-theme
                     ];
+                  };
+                  #services.pantalaimon = {
+                    #package = pkgs.pantalaimon.overridePythonAttrs { doCheck = false; };
+                    #enable = true;
+                    #settings = {
+                        #Default = {
+                          #LogLevel = "Debug";
+                          #SSL = true;
+                        #};
+                        #local-matrix = {
+                          #Homeserver = "https://synapse.room409.xyz";
+                          #ListenAddress = "127.0.0.1";
+                          #ListenPort = "8009";
+                        #};
+                    #};
+                  #};
+                  programs.iamb = {
+                    enable = true;
+                    settings = {
+                      settings = {
+                        image_preview = {};
+                        username_display = "displayname";
+                        sort = {
+                          rooms = ["recent"];
+                        };
+                      };
+                      profiles.miloignis = {
+                        user_id = "@miloignis:synapse.room409.xyz";
+                      };
+                    };
                   };
               })

@@ -27,7 +27,7 @@
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
         modules = [
-          ((import ./home.nix) { username = "nbraswell6"; homeDirectory = "/home/nbraswell6";})
+          ((import ./home.nix) { username = "nbraswell6"; homeDirectory = "/home/nbraswell6"; backgroundImg = "/home/nbraswell6"; email = "nathan.braswell@gtri.gatech.edu"; })
           #niri.nixosModules.niri
           niri.homeModules.niri
         ];

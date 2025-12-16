@@ -7,6 +7,10 @@
           url = "github:danth/stylix";
           inputs.nixpkgs.follows =  "nixpkgs";
         };
+        awww = {
+          url = "git+https://codeberg.org/LGFae/awww";
+          inputs.nixpkgs.follows =  "nixpkgs";
+        };
 
         niri = {
             url = "github:sodiboo/niri-flake";
@@ -19,7 +23,7 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     };
 
-    outputs = { self, nixpkgs, stylix, niri, home-manager, nixos-hardware }@attrs:
+    outputs = { self, nixpkgs, stylix, awww, niri, home-manager, nixos-hardware }@attrs:
         let
           system = "x86_64-linux";
           make_besley = pkgs:(lib: (pkgs.stdenvNoCC.mkDerivation rec {
@@ -43,12 +47,17 @@
                         platforms = platforms.all;
                       };
                     }));
+          #background = ./GitS_other_alley_zoom.png;
+          background = ./GitS_alley_to_water_zoom.png;
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
-              home-manager.users.nathan = ((import ./home-manager/home.nix) { username = "nathan"; homeDirectory = "/home/nathan"; });
+              home-manager.users.nathan = ((import ./home-manager/home.nix) { username = "nathan"; homeDirectory = "/home/nathan"; backgroundImg = background; email = "miloignis@gmail.com"; });
           };
           commonConfigFunc = ({ config, lib, pkgs, modulesPath, ... }: (specificPkgs: {
                   nixpkgs.config.allowUnfree = true;
+                  nixpkgs.config.permittedInsecurePackages = [
+                      "olm-3.2.16"
+                  ];
                   nix.settings.experimental-features = [ "nix-command" "flakes" ];
                   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
                   time.timeZone = "America/New_York";
@@ -94,7 +103,7 @@
                     #image = ./ruinedmansion.jpg;
                     #image = ./130_1zhJtUA.jpeg; #the city street
                     #image = ./GitS_alley_to_water_zoom.png;
-                    image = ./GitS_other_alley_zoom.png;
+                    image = background;
                     #image = pkgs.fetchurl {
                     #  url = "https://raw.githubusercontent.com/kiedtl/walls/refs/heads/master/green-tea.jpg";
                     #  sha256 = "sha256-+NcZMBnbEWurmkOkzdrxGwBlxzUO3Sitt6Uoq9plc7o=";
@@ -102,13 +111,12 @@
                     polarity = "dark";
                     #polarity = "light";
                     fonts = {
-                      # hehe casual as serif
                       serif     = { package = (make_besley pkgs lib); name = "Besley"; };
-                      #serif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
                       #sansSerif = { package = pkgs.recursive; name = "Recursive Sans Linear Static"; };
                       sansSerif = { package = pkgs.inter; name = "Inter"; };
                       monospace = { package = pkgs.recursive; name = "Recursive Mono Linear Static"; };
-                      emoji     = { package = pkgs.noto-fonts-emoji; name = "Noto Color Emoji"; };
+                      #monospace = { package = pkgs.maple-mono.truetype; name = "Maple Mono"; };
+                      emoji     = { package = pkgs.noto-fonts-color-emoji; name = "Noto Color Emoji"; };
                     };
                   };
                   programs.niri = {
@@ -121,7 +129,7 @@
                     extraPackages = with pkgs; [
                       swaylock # lockscreen
                       swayidle
-                      xwayland # for legacy apps
+                      #xwayland # for legacy apps
                       #waybar # status bar
                       mako # notification daemon
                       kanshi # autorandr
@@ -136,16 +144,16 @@
                     };
                   };
                   # For steam, and Vulkan in general
-                  #hardware.opengl.driSupport = true;
-                  hardware.opengl.driSupport32Bit = true;
+                  hardware.graphics.enable32Bit = true;
                   hardware.steam-hardware.enable = true;
                   programs.steam.enable = true;
 
                   environment.systemPackages = with pkgs; [
+                    awww.packages.${pkgs.stdenv.hostPlatform.system}.awww
                     tmux vim wget curl git w3m iftop iotop killall file unzip zip p7zip ripgrep imv killall
                     btop htop python3
-                    waypipe firefox-wayland chromium chawan nautilus
-                    vlc mpv wayfarer libreoffice calibre foliate #transmission-gtk mupdf
+                    waypipe firefox chromium chawan cmatrix nautilus
+                    vlc mpv wayfarer libreoffice calibre foliate epr #transmission-gtk mupdf
                     gimp
                     pavucontrol pywal
                     sway wayland glib dracula-theme adwaita-icon-theme swaylock swayidle wl-clipboard
@@ -219,7 +227,7 @@
                   
                   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usb_storage" "sd_mod" ];
                   boot.initrd.kernelModules = [ "amdgpu" ];
-                  hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
+                  #hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
                   boot.kernelModules = [ "kvm-amd" ];
                   boot.extraModulePackages = [ ];
                   
@@ -262,6 +270,10 @@
                   #  displayManager.gdm.enable = true;
                   #  desktopManager.gnome.enable = true;
                   #};
+                  networking.firewall = {
+                      allowedTCPPorts = [ 8080 8081 ]; #30000 is minetest
+                      allowedUDPPorts = [ 8080 8081 ];
+                  };
                 }))
             ];
         };
@@ -899,6 +911,125 @@
                               </body>
                           </html>
                           '';
+                        };
+                      };
+                      virtualHosts."survey-test1.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          root = pkgs.writeTextDir "index.html" ''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guest Survey</title>
+</head>
+<body>
+<iframe src="https://gatech.co1.qualtrics.com/jfe/form/SV_9txRmN3ky239cdo" height="800px" width="600px"></iframe>
+</body>
+</html>
+'';
+                        };
+                      };
+
+                      virtualHosts."survey-test2.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          root = pkgs.writeTextDir "index.html" ''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guest Survey</title>
+</head>
+<body>
+<style>
+  .survey-wrapper { width:100%; max-width:1000px; margin:0 auto; }
+  .survey-iframe { width:100%; height:80vh; border:0; min-height:600px; }
+</style>
+
+<div class="survey-wrapper" role="region" aria-label="Survey">
+  <div id="survey-container"></div>
+</div>
+
+<script>
+  // 1) Read host-page query params
+  const params = new URLSearchParams(location.search);
+
+  // 2) Get utm_campaign (example: RF777101202)
+  const utmCampaign = params.get('utm_campaign');
+
+  // 3) Decide which Embedded Data field name Qualtrics should receive
+  //    (use 'Referral' if that's your embedded-data field in Qualtrics)
+  if (utmCampaign) {
+    params.set('Referral', utmCampaign);
+  }
+
+  // 4) Optionally keep the original UTM values as well
+  //    (uncomment if you want them passed through)
+  // params.set('utm_source', params.get('utm_source') || 'unknown');
+  // params.set('utm_medium', params.get('utm_medium') || 'unknown');
+  // params.set('utm_campaign', utmCampaign || "");
+
+  // 5) Build and insert the iframe with the serialized params
+  const iframe = document.createElement('iframe');
+  iframe.className = 'survey-iframe';
+  iframe.title = 'Guest survey';
+  iframe.allowFullscreen = true;
+
+  // Replace the base URL below with your Qualtrics anonymous survey URL
+  const baseSurveyUrl = 'https://gatech.co1.qualtrics.com/jfe/form/SV_9txRmN3ky239cdo';
+  iframe.src = baseSurveyUrl + '?' + params.toString();
+
+  document.getElementById('survey-container').appendChild(iframe);
+</script>
+
+</body>
+</html>
+'';
+                        };
+                      };
+                      virtualHosts."survey-test3.room409.xyz" = {
+                        forceSSL = true;
+                        enableACME = true;
+                        locations."/" = {
+                          root = pkgs.writeTextDir "index.html" ''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guest Survey</title>
+  <style>
+    .survey-wrapper { width:100%; max-width:1000px; margin:0 auto; padding:1rem; }
+    .survey-iframe { width:100%; height:80vh; border:0; min-height:600px; }
+  </style>
+</head>
+<body>
+  <main class="survey-wrapper" role="region" aria-label="Survey">
+    <div id="survey-container"></div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const utmCampaign = params.get('utm_campaign');
+    if (utmCampaign) {
+      params.set('Referral', utmCampaign);
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.className = 'survey-iframe';
+    iframe.title = 'Guest survey';
+    iframe.allowFullscreen = true;
+
+    const baseSurveyUrl = 'https://gatech.co1.qualtrics.com/jfe/form/SV_9txRmN3ky239cdo';
+    iframe.src = baseSurveyUrl + (params.toString() ? '?' + params.toString() : "");
+
+    document.getElementById('survey-container').appendChild(iframe);
+  </script>
+</body>
+</html>
+'';
                         };
                       };
 
