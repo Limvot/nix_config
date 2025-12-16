@@ -269,6 +269,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                stylix.nixosModules.stylix
                 niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
@@ -644,7 +645,7 @@
                     writeable = true;
                     username = "miloignis";
                     passwordFile = /var/lib/ttyd/secrets;
-                    clientOptions.fontFamily="Recursive";
+                    #clientOptions.fontFamily="Recursive";
                   };
 
                   security.acme = {
