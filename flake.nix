@@ -227,7 +227,6 @@
                   
                   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usb_storage" "sd_mod" ];
                   boot.initrd.kernelModules = [ "amdgpu" ];
-                  #hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
                   boot.kernelModules = [ "kvm-amd" ];
                   boot.extraModulePackages = [ ];
                   
@@ -291,7 +290,6 @@
 
                   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_usb_sdmmc" ];
                   boot.initrd.kernelModules = [ "amdgpu" ];
-                  hardware.opengl.extraPackages = with pkgs; [ amdvlk ];
                   boot.kernelModules = [ "kvm-amd" ];
                   boot.extraModulePackages = [ ];
 
