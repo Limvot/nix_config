@@ -296,6 +296,7 @@
                   fileSystems."/" = { device = "/dev/disk/by-uuid/ae8e4a92-53dd-49b5-bf3a-aeb9a109c01e"; fsType = "ext4"; };
                   fileSystems."/boot" = { device = "/dev/disk/by-uuid/28E9-0409"; fsType = "vfat"; };
                   fileSystems."/nas_disk1" = { device = "/dev/disk/by-uuid/d7907ed2-2aff-4cfc-bb4d-fa46b3f1af57"; fsType = "ext4"; };
+                  fileSystems."/nas_disk2" = { device = "/dev/disk/by-uuid/96f76bf1-4eee-420c-9dbc-222565e64478"; fsType = "ext4"; };
                   swapDevices = [ ];
                   # END HARDWARE
 
