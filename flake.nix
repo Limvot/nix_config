@@ -48,7 +48,8 @@
                       };
                     }));
           #background = ./GitS_other_alley_zoom.png;
-          background = ./GitS_alley_to_water_zoom.png;
+          #background = ./GitS_alley_to_water_zoom.png;
+          background = ./waneella/Destination_waneella.png;
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
               home-manager.users.nathan = ((import ./home-manager/home.nix) { username = "nathan"; homeDirectory = "/home/nathan"; backgroundImg = background; email = "miloignis@gmail.com"; });

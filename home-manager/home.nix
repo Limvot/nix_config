@@ -96,11 +96,11 @@
                   programs.niri.settings = {
                     prefer-no-csd = true;
                     # TV at 1080 instead of 4k
-                    #outputs."DP-4".mode = {
-                    #  width = 1920;
-                    #  height = 1080;
-                    #  refresh = 60.000;
-                    #};
+                    outputs."DP-4".mode = {
+                      width = 1920;
+                      height = 1080;
+                      refresh = 60.000;
+                    };
                     input.keyboard.xkb = {
                       options = "ctrl:nocaps";
                     };
