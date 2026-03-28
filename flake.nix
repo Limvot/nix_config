@@ -3,6 +3,10 @@
 
     inputs = {
         nixpkgs.url = "nixpkgs/nixos-unstable";
+        nur = {
+          url = "github:nix-community/NUR";
+          inputs.nixpkgs.follows =  "nixpkgs";
+        };
         stylix = {
           url = "github:danth/stylix";
           inputs.nixpkgs.follows =  "nixpkgs";
@@ -23,7 +27,7 @@
         nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     };
 
-    outputs = { self, nixpkgs, stylix, awww, niri, home-manager, nixos-hardware }@attrs:
+    outputs = { self, nixpkgs, nur, stylix, awww, niri, home-manager, nixos-hardware }@attrs:
         let
           system = "x86_64-linux";
           make_besley = pkgs:(lib: (pkgs.stdenvNoCC.mkDerivation rec {
@@ -49,7 +53,8 @@
                     }));
           #background = ./GitS_other_alley_zoom.png;
           #background = ./GitS_alley_to_water_zoom.png;
-          background = ./waneella/Destination_waneella.png;
+          #background = ./waneella/Destination_waneella.png;
+          background = ./waneella/Apr_05-21.png;
           homeManagerSharedModule = {
               home-manager.useGlobalPkgs = true;
               home-manager.users.nathan = ((import ./home-manager/home.nix) { username = "nathan"; homeDirectory = "/home/nathan"; backgroundImg = background; email = "miloignis@gmail.com"; });
@@ -218,6 +223,7 @@
             specialArgs = attrs;
             modules = [
                 nixos-hardware.nixosModules.framework-13-7040-amd
+                nur.modules.nixos.default
                 stylix.nixosModules.stylix
                 niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
@@ -281,6 +287,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                nur.modules.nixos.default
                 stylix.nixosModules.stylix
                 niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
@@ -348,6 +355,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                nur.modules.nixos.default
                 niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
@@ -383,6 +391,7 @@
             inherit system;
             specialArgs = attrs;
             modules = [
+                nur.modules.nixos.default
                 niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule

@@ -289,6 +289,51 @@
                       "Alt+Shift+P".action = power-off-monitors;
                     };
                   };
+                  programs.firefox = {
+                    enable = true;
+                    profiles = let 
+                      shared = {
+                        search = {
+                          force = true;
+                          default = "Kagi";
+                          engines = {
+                            "Kagi" = {
+                              urls = [
+                                {
+                                  template = "https://kagi.com/search?q={searchTerms}";
+                                }
+                              ];
+                            };
+                          };
+                        };
+                        settings = {
+                          extensions.autoDisableScopes = 0;
+                        };
+                        extensions = {
+                          force = true;
+                          packages = with pkgs.nur.repos.rycee.firefox-addons; [
+                            vimium
+                            darkreader
+                            bitwarden
+                            ublock-origin
+                          ];
+                        };
+                      };
+                    in {
+                      default = shared //  {
+                        isDefault = true;
+                        id = 0;
+                      };
+                      st = shared // {
+                        isDefault = false;
+                        id = 1;
+                      };
+                    };
+                  };
+                  stylix.targets.firefox = {
+                    colorTheme.enable = true;
+                    profileNames = [ "default" "st" ];
+                  };
 
                   programs.ghostty = {
                     enable = true;
@@ -406,6 +451,7 @@
                   programs.bash = {
                     enable = true;
                     sessionVariables = {
+                      EDITOR = "vim";
                     };
                     profileExtra = ''
                       if [ -e /home/nathan/.nix-profile/etc/profile.d/nix.sh ]; then . /home/nathan/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
@@ -476,6 +522,9 @@
 
                       nnoremap <S-h> :call ToggleHiddenAll()<CR>
                     '';
+                  };
+                  programs.zellij = {
+                    enable = true;
                   };
                   programs.tmux = {
                     enable = true;
