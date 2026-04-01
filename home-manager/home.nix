@@ -184,109 +184,109 @@
                       #};
                     };
                     binds = with config.lib.niri.actions; {
-                      #"Alt+P".action = spawn "bemenu-run";
-                      "Alt+P".action = spawn "fuzzel";
-                      "Alt+Return".action = spawn "ghostty";
-                      "Alt+Shift+Return".action = spawn "foot";
-                      "Alt+Shift+Slash".action = show-hotkey-overlay;
+                      #"Super+P".action = spawn "bemenu-run";
+                      "Super+P".action = spawn "fuzzel";
+                      "Super+Return".action = spawn "ghostty";
+                      "Super+Shift+Return".action = spawn "foot";
+                      "Super+Shift+Slash".action = show-hotkey-overlay;
 
-                      "Alt+Shift+C".action = close-window;
+                      "Super+Shift+C".action = close-window;
 
-                      "Alt+Left"  .action = focus-column-left;
-                      "Alt+Down"  .action = focus-window-down;
-                      "Alt+Up"    .action = focus-window-up;
-                      "Alt+Right" .action = focus-column-right;
-                      "Alt+H"     .action = focus-column-left;
-                      #"Alt+J"     .action = focus-window-down;
-                      #"Alt+K"     .action = focus-window-up;
-                      "Alt+L"     .action = focus-column-right;
+                      "Super+Left"  .action = focus-column-left;
+                      "Super+Down"  .action = focus-window-down;
+                      "Super+Up"    .action = focus-window-up;
+                      "Super+Right" .action = focus-column-right;
+                      "Super+H"     .action = focus-column-left;
+                      #"Super+J"     .action = focus-window-down;
+                      #"Super+K"     .action = focus-window-up;
+                      "Super+L"     .action = focus-column-right;
 
-                      "Alt+Shift+Left"  .action = move-column-left;
-                      "Alt+Shift+Down"  .action = move-window-down;
-                      "Alt+Shift+Up"    .action = move-window-up;
-                      "Alt+Shift+Right" .action = move-column-right;
-                      "Alt+Shift+H"     .action = move-column-left;
-                      #"Alt+Shift+J"     .action = move-window-down;
-                      #"Alt+Shift+K"     .action = move-window-up;
-                      "Alt+Shift+L"     .action = move-column-right;
+                      "Super+Shift+Left"  .action = move-column-left;
+                      "Super+Shift+Down"  .action = move-window-down;
+                      "Super+Shift+Up"    .action = move-window-up;
+                      "Super+Shift+Right" .action = move-column-right;
+                      "Super+Shift+H"     .action = move-column-left;
+                      #"Super+Shift+J"     .action = move-window-down;
+                      #"Super+Shift+K"     .action = move-window-up;
+                      "Super+Shift+L"     .action = move-column-right;
 
                       # Nice alts
-                      "Alt+J"      .action = focus-window-or-workspace-down;
-                      "Alt+K"      .action = focus-window-or-workspace-up;
-                      "Alt+Shift+J".action = move-window-down-or-to-workspace-down;
-                      "Alt+Shift+K".action = move-window-up-or-to-workspace-up;
+                      "Super+J"      .action = focus-window-or-workspace-down;
+                      "Super+K"      .action = focus-window-or-workspace-up;
+                      "Super+Shift+J".action = move-window-down-or-to-workspace-down;
+                      "Super+Shift+K".action = move-window-up-or-to-workspace-up;
 
 
-                      "Alt+Ctrl+Left" .action = focus-monitor-left;
-                      "Alt+Ctrl+Down" .action = focus-monitor-down;
-                      "Alt+Ctrl+Up"   .action = focus-monitor-up;
-                      "Alt+Ctrl+Right".action = focus-monitor-right;
-                      "Alt+Ctrl+H"    .action = focus-monitor-left;
-                      "Alt+Ctrl+J"    .action = focus-monitor-down;
-                      "Alt+Ctrl+K"    .action = focus-monitor-up;
-                      "Alt+Ctrl+L"    .action = focus-monitor-right;
+                      "Super+Ctrl+Left" .action = focus-monitor-left;
+                      "Super+Ctrl+Down" .action = focus-monitor-down;
+                      "Super+Ctrl+Up"   .action = focus-monitor-up;
+                      "Super+Ctrl+Right".action = focus-monitor-right;
+                      "Super+Ctrl+H"    .action = focus-monitor-left;
+                      "Super+Ctrl+J"    .action = focus-monitor-down;
+                      "Super+Ctrl+K"    .action = focus-monitor-up;
+                      "Super+Ctrl+L"    .action = focus-monitor-right;
 
-                      "Alt+Shift+Ctrl+Left"  .action = move-column-to-monitor-left;
-                      "Alt+Shift+Ctrl+Down"  .action = move-column-to-monitor-down;
-                      "Alt+Shift+Ctrl+Up"    .action = move-column-to-monitor-up;
-                      "Alt+Shift+Ctrl+Right" .action = move-column-to-monitor-right;
-                      "Alt+Shift+Ctrl+H"     .action = move-column-to-monitor-left;
-                      "Alt+Shift+Ctrl+J"     .action = move-column-to-monitor-down;
-                      "Alt+Shift+Ctrl+K"     .action = move-column-to-monitor-up;
-                      "Alt+Shift+Ctrl+L"     .action = move-column-to-monitor-right;
+                      "Super+Shift+Ctrl+Left"  .action = move-column-to-monitor-left;
+                      "Super+Shift+Ctrl+Down"  .action = move-column-to-monitor-down;
+                      "Super+Shift+Ctrl+Up"    .action = move-column-to-monitor-up;
+                      "Super+Shift+Ctrl+Right" .action = move-column-to-monitor-right;
+                      "Super+Shift+Ctrl+H"     .action = move-column-to-monitor-left;
+                      "Super+Shift+Ctrl+J"     .action = move-column-to-monitor-down;
+                      "Super+Shift+Ctrl+K"     .action = move-column-to-monitor-up;
+                      "Super+Shift+Ctrl+L"     .action = move-column-to-monitor-right;
 
 
                       #...
-                      "Alt+1".action = focus-workspace 1;
-                      "Alt+2".action = focus-workspace 2;
-                      "Alt+3".action = focus-workspace 3;
-                      "Alt+4".action = focus-workspace 4;
-                      "Alt+5".action = focus-workspace 5;
-                      "Alt+6".action = focus-workspace 6;
-                      "Alt+7".action = focus-workspace 7;
-                      "Alt+8".action = focus-workspace 8;
-                      "Alt+9".action = focus-workspace 9;
-                      #"Alt+Shift+1".action = move-column-to-workspace 1;
-                      #"Alt+Shift+2".action = move-column-to-workspace 2;
-                      #"Alt+Shift+3".action = move-column-to-workspace 3;
-                      #"Alt+Shift+4".action = move-column-to-workspace 4;
-                      #"Alt+Shift+5".action = move-column-to-workspace 5;
-                      #"Alt+Shift+6".action = move-column-to-workspace 6;
-                      #"Alt+Shift+7".action = move-column-to-workspace 7;
-                      #"Alt+Shift+8".action = move-column-to-workspace 8;
-                      #"Alt+Shift+9".action = move-column-to-workspace 9;
+                      "Super+1".action = focus-workspace 1;
+                      "Super+2".action = focus-workspace 2;
+                      "Super+3".action = focus-workspace 3;
+                      "Super+4".action = focus-workspace 4;
+                      "Super+5".action = focus-workspace 5;
+                      "Super+6".action = focus-workspace 6;
+                      "Super+7".action = focus-workspace 7;
+                      "Super+8".action = focus-workspace 8;
+                      "Super+9".action = focus-workspace 9;
+                      #"Super+Shift+1".action = move-column-to-workspace 1;
+                      #"Super+Shift+2".action = move-column-to-workspace 2;
+                      #"Super+Shift+3".action = move-column-to-workspace 3;
+                      #"Super+Shift+4".action = move-column-to-workspace 4;
+                      #"Super+Shift+5".action = move-column-to-workspace 5;
+                      #"Super+Shift+6".action = move-column-to-workspace 6;
+                      #"Super+Shift+7".action = move-column-to-workspace 7;
+                      #"Super+Shift+8".action = move-column-to-workspace 8;
+                      #"Super+Shift+9".action = move-column-to-workspace 9;
 
                       #Consume one window from the right into the focused column.
-                      "Alt+Comma"  .action = consume-window-into-column;
+                      "Super+Comma"  .action = consume-window-into-column;
                       #Expel one window from the focused column to the right.
-                      "Alt+Period" .action = expel-window-from-column;
+                      "Super+Period" .action = expel-window-from-column;
 
                       #There are also commands that consume or expel a single window to the side.
-                      "Alt+BracketLeft"  .action = consume-or-expel-window-left;
-                      "Alt+BracketRight" .action = consume-or-expel-window-right;
+                      "Super+BracketLeft"  .action = consume-or-expel-window-left;
+                      "Super+BracketRight" .action = consume-or-expel-window-right;
 
-                      "Alt+R".action = switch-preset-column-width;
-                      "Alt+Shift+R".action = switch-preset-window-height;
-                      "Alt+Ctrl+R".action = reset-window-height;
-                      "Alt+F".action = maximize-column;
-                      "Alt+Shift+F".action = fullscreen-window;
-                      "Alt+C".action = center-column;
+                      "Super+R".action = switch-preset-column-width;
+                      "Super+Shift+R".action = switch-preset-window-height;
+                      "Super+Ctrl+R".action = reset-window-height;
+                      "Super+F".action = maximize-column;
+                      "Super+Shift+F".action = fullscreen-window;
+                      "Super+C".action = center-column;
 
-                      "Alt+Minus".action = set-column-width "-10%";
-                      "Alt+Equal".action = set-column-width "+10%";
+                      "Super+Minus".action = set-column-width "-10%";
+                      "Super+Equal".action = set-column-width "+10%";
 
-                      "Alt+Shift+Minus".action = set-window-height "-10%";
-                      "Alt+Shift+Equal".action = set-window-height "+10%";
+                      "Super+Shift+Minus".action = set-window-height "-10%";
+                      "Super+Shift+Equal".action = set-window-height "+10%";
 
-                      "Alt+S".action.screenshot.show-pointer = false;
+                      "Super+S".action.screenshot.show-pointer = false;
                       #"Print".action = screenshot;
                       #"Ctrl+Print".aciton = screenshot-screen;
-                      #"Alt+Print".action = screenshot-window;
+                      #"Super+Print".action = screenshot-window;
 
-                      "Alt+Shift+E".action = quit;
-                      "Ctrl+Alt+Delete".action = quit;
+                      "Super+Shift+E".action = quit;
+                      "Ctrl+Super+Delete".action = quit;
 
-                      "Alt+Shift+P".action = power-off-monitors;
+                      "Super+Shift+P".action = power-off-monitors;
                     };
                   };
                   programs.firefox = {
