@@ -96,11 +96,17 @@
                   programs.niri.settings = {
                     prefer-no-csd = true;
                     # TV at 1080 instead of 4k
-                    outputs."DP-4".mode = {
-                      width = 1920;
-                      height = 1080;
-                      refresh = 60.000;
-                    };
+                    #outputs."DP-4".mode = {
+                    #  width = 1920;
+                    #  height = 1080;
+                    #  refresh = 60.000;
+                    #};
+                    ## LG Ultrawide
+                    #outputs."DP-4".mode = {
+                    #  width = 1920;
+                    #  height = 1080;
+                    #  refresh = 60.000;
+                    #};
                     input.keyboard.xkb = {
                       options = "ctrl:nocaps";
                     };
@@ -616,19 +622,19 @@
                         #};
                     #};
                   #};
-                  programs.iamb = {
-                    enable = true;
-                    settings = {
-                      settings = {
-                        image_preview = {};
-                        username_display = "displayname";
-                        sort = {
-                          rooms = ["recent"];
-                        };
-                      };
-                      profiles.miloignis = {
-                        user_id = "@miloignis:synapse.room409.xyz";
-                      };
-                    };
-                  };
+                  #programs.iamb = {
+                  #  enable = true;
+                  #  settings = {
+                  #    settings = {
+                  #      image_preview = {};
+                  #      username_display = "displayname";
+                  #      sort = {
+                  #        rooms = ["recent"];
+                  #      };
+                  #    };
+                  #    profiles.miloignis = {
+                  #      user_id = "@miloignis:synapse.room409.xyz";
+                  #    };
+                  #  };
+                  #};
               })
