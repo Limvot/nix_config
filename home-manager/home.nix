@@ -484,6 +484,10 @@
                       email = email;
                     };
                   };
+                  programs.helix = {
+                    enable = true;
+                    settings = { };
+                  };
                   programs.vim = {
                     enable = true;
                     plugins = with pkgs.vimPlugins; [
