@@ -341,6 +341,23 @@
                     profileNames = [ "default" "st" ];
                   };
 
+                  programs.wezterm = {
+                    enable = true;
+                    # settings = {
+                    #   hide_tab_bar_if_only_one_tab = true;
+                    # };
+                    extraConfig = ''
+                      config.hide_tab_bar_if_only_one_tab = true;
+                      config.line_height = 0.98; -- matching ghostty
+                      config.window_padding = {
+                        left   = 0,
+                        right  = 0,
+                        top    = 0,
+                        bottom = 0,
+                      };
+                    '';
+                  };
+
                   programs.ghostty = {
                     enable = true;
                     settings = {

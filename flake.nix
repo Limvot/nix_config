@@ -228,7 +228,7 @@
                 niri.nixosModules.niri
                 home-manager.nixosModules.home-manager
                 homeManagerSharedModule
-                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.gpodder pkgs.evince pkgs.wezterm pkgs.vulkan-tools pkgs.tor-browser ]) {
+                ({ config, lib, pkgs, modulesPath, ... }@innerArgs: (lib.recursiveUpdate (commonConfigFunc innerArgs [ pkgs.gpodder pkgs.evince pkgs.vulkan-tools pkgs.tor-browser ]) {
                   # HARDWARE
                   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
                   
