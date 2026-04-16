@@ -11,11 +11,12 @@
                   home.username = username;
                   home.homeDirectory = homeDirectory;
                   
+                  gtk.gtk4.theme = null;
                   fonts.fontconfig.enable = true;
                   home.packages = with pkgs; [
                     fira-code jetbrains-mono iosevka monoid recursive inter
                     xwayland-satellite
-                    swww
+                    awww
                     niri
                   ]; 
 
@@ -116,8 +117,6 @@
                     spawn-at-startup = [
                       { command = [ "awww-daemon" ]; }
                       { command = [ "awww" "img" "${backgroundImg}" ]; }
-                      #{ command = [ "swww-daemon" ]; }
-                      #{ command = [ "swww" "img" "${backgroundImg}" ]; }
                       { command = [ "waybar" ]; }
                       { command = [ "xwayland-satellite" ]; }
                     ];
@@ -417,8 +416,11 @@
                   programs.git = {
                     enable = true;
                     lfs.enable = true;
-                    userName = "Nathan Braswell";
-                    userEmail = email;
+                    signing.format = null;
+                    settings.user = {
+                      name = "Nathan Braswell";
+                      email = email;
+                    };
                   };
                   programs.jujutsu = {
                     enable = true;
