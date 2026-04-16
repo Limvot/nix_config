@@ -192,7 +192,7 @@
                     binds = with config.lib.niri.actions; {
                       #"Super+P".action = spawn "bemenu-run";
                       "Super+P".action = spawn "fuzzel";
-                      "Super+Return".action = spawn "ghostty";
+                      "Super+Return".action = spawn "wezterm";
                       "Super+Shift+Return".action = spawn "foot";
                       "Super+Shift+Slash".action = show-hotkey-overlay;
 
@@ -343,9 +343,6 @@
 
                   programs.wezterm = {
                     enable = true;
-                    # settings = {
-                    #   hide_tab_bar_if_only_one_tab = true;
-                    # };
                     extraConfig = ''
                       config.hide_tab_bar_if_only_one_tab = true;
                       config.line_height = 0.98; -- matching ghostty
@@ -363,83 +360,12 @@
                     settings = {
                       window-decoration = false;
                       minimum-contrast = 1.5;
-                      #font-family = "Recursive Mono Linear Static";
-                      #font-size = 11;
-                      #theme = "GruvboxDarkHard";
-                      #theme = "Horizon";
-                      #theme = "IC_Green_PPL";
-                      #theme = "IC_Orange_PPL";
-                      #theme = "iceberg-dark";
-                      #theme = "Kanagawa Dragon";
-                      #theme = "Kanagawa Wave";
-                      #theme = "kanagawabones";
-                      #theme = "kurokula";
-                      #theme = "Later This Evening";
-                      #theme = "MaterialDarker";
-                      #theme = "MaterialOcean";
-                      #theme = "matrix";
-                      #theme = "Medallion";
-                      #theme = "Mellifluous";
-                      #theme = "Molokai";
-                      #theme = "MonaLisa";
-                      #theme = "Monokai Remastered";
-                      #theme = "Monokai Soda";
-
-                      #theme = "NightLion v2";
-
-                      #theme = "niji";
-                      #theme = "Nocturnal Winter";
-                      #theme = "nord";
-                      #theme = "NvimDark";
-                      #theme = "Oceanic-Next";
-                      #theme = "OneHalfDark";
-                      #theme = "Paraiso Dark";
-                      #theme = "PaulMillr";
-                      #theme = "PencilDark";
-                      #theme = "Peppermint";
-                      #theme = "Pnevma";
-                      #theme = "Popping and Locking";
-                      #theme = "Red Planet";
-                      #theme = "rose-pine";
-                      #theme = "Ryuuko";
-                      #theme = "SeaShells";
-                      #theme = "Seti";
-                      #theme = "Shaman";
-                      #theme = "Slate";
-                      #theme = "Smyck";
-                      #theme = "Snazzy";
-                      #theme = "SoftServer";
-                      #theme = "Solarized Dark - Patched";
-                      #theme = "Solarized Dark Higher Contrast";
-                      #theme = "SpaceGray Bright";
-                      #theme = "SpaceGray Eighties";
-                      #theme = "SpaceGray Eighties Dull";
-                      #theme = "terafox";
-                      #theme = "Thayer Bright";
-                      #theme = "Tinacious Design (Dark)";
-                      #theme = "tokyonight";
-                      #theme = "tokyonight-storm";
-                      #theme = "Tomorrow Night Burns";
-                      #theme = "UltraViolent";
-                      #theme = "Violet Dark";
-                      #theme = "Whimsy";
-                      #theme = "WildCherry";
-                      #theme = "wilmersdorf";
-                      #theme = "Wombat";
-                      #theme = "xcodewwdc";
-                      #theme = "zenbones_dark";
-                      #theme = "zenwritten_dark";
                     };
                   };
                   programs.foot = {
                     enable = true;
                     settings = {
                       main = {
-                        #font = "Fira Code:size=8";
-                        #font = "JetBrainsMono:size=8";
-                        #font = "Iosevka:size=18";
-                        #font = "Monoid:size=6";
-                        #font = "Recursive:size=16"; # seems to be Recursive Mono Linear Static in Ghostty
                         #dpi-aware = "yes";
                       };
                       mouse = {
